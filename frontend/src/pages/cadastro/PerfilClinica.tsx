@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PerfilClinica: React.FC = () => (
+const PessoaJuridicaPage: React.FC = () => (
   <div
     style={{
       padding: 20,
@@ -15,4 +15,4 @@ const PerfilClinica: React.FC = () => (
   </div>
 );
 
-export default PerfilClinica;
+export default PessoaJuridicaPage;

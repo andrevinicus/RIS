@@ -184,57 +184,58 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Itens do menu de navegação */}
       <nav style={{ flexGrow: 1 }}>
-  {filteredItems.map(({ key, label, Icon }) => {
-    const isActive = menuOpen === key;
-    return (
-      <TooltipPrimitive.Provider key={key}>
-        <TooltipPrimitive.Root delayDuration={300}>
-          <TooltipPrimitive.Trigger asChild>
-            <button
-              onClick={() => handleMenuClick(key)}
-              onMouseEnter={() => handleMouseEnter(key)}
-              onMouseLeave={() => handleMouseLeave(key)}
-              style={{
-                width: '100%',
-                padding: collapsed ? '15px 0' : '12px 0', // só vertical
-                borderRadius: 2,
-                backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : 'transparent',
-                color: 'white',
-                border: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: collapsed ? 'center' : 'flex-start',
-                cursor: 'pointer',
-                marginBottom: 14,
-                fontSize: 16,
-                fontWeight: isActive ? 700 : 500,
-                opacity: isActive ? 1 : 0.75,
-                transition: 'all 0.3s ease',
-              }}
-            >
-              <div
-                style={{
-                  paddingLeft: collapsed ? 0 : 20,
-                  display: 'flex',
-                  alignItems: 'center',
-                  width: '100%',
-                  gap: 16,
-                  color: 'white',
-                }}
-              >
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  {React.createElement(Icon, { size: 20 })}
-                </span>
-                {!collapsed && label}
-              </div>
-            </button>
-          </TooltipPrimitive.Trigger>
-        </TooltipPrimitive.Root>
-      </TooltipPrimitive.Provider>
-    );
-  })}
-</nav>
-
+        {filteredItems.map(({ key, label, Icon }) => {
+          const isActive = menuOpen === key;
+          return (
+            <TooltipPrimitive.Provider key={key}>
+              <TooltipPrimitive.Root delayDuration={300}>
+                <TooltipPrimitive.Trigger asChild>
+                  <button
+                    onClick={() => handleMenuClick(key)}
+                    onMouseEnter={() => handleMouseEnter(key)}
+                    onMouseLeave={() => handleMouseLeave(key)}
+                    style={{
+                      width: '100%',
+                      padding: collapsed ? '15px 0' : '12px 0',
+                      borderRadius: 2,
+                      backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : 'transparent',
+                      color: 'white',
+                      border: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: collapsed ? 'center' : 'flex-start',
+                      cursor: 'pointer',
+                      marginBottom: 14,
+                      fontSize: 16,
+                      fontWeight: isActive ? 700 : 500,
+                      opacity: isActive ? 1 : 0.75,
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    <div
+                      style={{
+                        paddingLeft: collapsed ? 0 : 20,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: collapsed ? 0 : 16,
+                        color: 'white',
+                        // IMPORTANTE: só setar width quando NÃO estiver colapsado
+                        width: collapsed ? 'auto' : '100%',
+                        justifyContent: collapsed ? 'center' : 'flex-start',
+                      }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center' }}>
+                        {React.createElement(Icon, { size: 20 })}
+                      </span>
+                      {!collapsed && label}
+                    </div>
+                  </button>
+                </TooltipPrimitive.Trigger>
+              </TooltipPrimitive.Root>
+            </TooltipPrimitive.Provider>
+          );
+        })}
+      </nav>
 
       {/* Botão de logout */}
       <button

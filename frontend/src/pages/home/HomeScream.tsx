@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import SubSidebarCadastro from '../../components/Sidebar/SubSidebarCadastro';
-// ajuste o caminho se necessário
 
 interface UserInfo {
   realname?: string;
@@ -21,11 +21,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ userInfo, onLogout }) => {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
 
-  // Estado para controlar hover do menu e submenu
   const [menuHover, setMenuHover] = useState(false);
   const [submenuHover, setSubmenuHover] = useState(false);
 
-  // Mostrar submenu se hover em menu ou submenu
   const showSubCadastro = menuHover || submenuHover;
 
   const sidebarWidth = collapsed ? 70 : 230;
@@ -49,9 +47,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ userInfo, onLogout }) => {
           menuOpen={menuOpen}
           setMenuOpen={(menu) => {
             setMenuOpen(menu);
-            // Dispatch eventos para abrir/fechar submenu também
             if (menu === 'Cadastros') {
-              setMenuHover(true); // força abrir submenu no clique também
+              setMenuHover(true);
             } else {
               setMenuHover(false);
               setSubmenuHover(false);
@@ -66,18 +63,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ userInfo, onLogout }) => {
         />
       )}
 
-      {/* SubSidebarCadastro */}
-{showSubCadastro && (
-  <SubSidebarCadastro
-    collapsed={collapsed}
-    onClose={() => {
-      setMenuHover(false);
-      setSubmenuHover(false);
-    }}
-    onMouseEnter={() => setSubmenuHover(true)}
-    onMouseLeave={() => setSubmenuHover(false)}
-  />
-)}
+      {showSubCadastro && (
+        <SubSidebarCadastro
+          collapsed={collapsed}
+          onClose={() => {
+            setMenuHover(false);
+            setSubmenuHover(false);
+          }}
+          onMouseEnter={() => setSubmenuHover(true)}
+          onMouseLeave={() => setSubmenuHover(false)}
+        />
+      )}
 
       <div
         style={{
@@ -115,7 +111,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ userInfo, onLogout }) => {
             height: 'calc(100vh - 60px)',
           }}
         >
-
+          {/* Aqui o conteúdo da rota filha vai aparecer */}
+          <Outlet />
         </main>
       </div>
     </div>
