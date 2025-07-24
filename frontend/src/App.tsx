@@ -4,8 +4,21 @@ import { routes } from './router/routes';
 import { AuthContext } from './context/AuthContext';
 
 const ProtectedRoute: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  const { token } = useContext(AuthContext);
-  if (!token) return <Navigate to="/login" replace />;
+  const { token, loading } = useContext(AuthContext);
+
+  if (loading) {
+    // Mostra um loader enquanto o contexto carrega o token
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <h2>Carregando...</h2>
+      </div>
+    );
+  }
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
   return <>{children}</>;
 };
 

@@ -6,9 +6,19 @@ interface HeaderProps {
   } | null;
   isMobile: boolean;
   toggleSidebar: () => void;
+  collapsed: boolean;
+  toggleCollapse: () => void;
+  style?: React.CSSProperties;  // ADICIONE ESSA LINHA
 }
 
-const Header: React.FC<HeaderProps> = ({ userInfo, isMobile, toggleSidebar }) => (
+const Header: React.FC<HeaderProps> = ({
+  userInfo,
+  isMobile,
+  toggleSidebar,
+  collapsed,
+  toggleCollapse,
+  style
+}) => (
   <header
     style={{
       height: 60,
@@ -21,26 +31,29 @@ const Header: React.FC<HeaderProps> = ({ userInfo, isMobile, toggleSidebar }) =>
       fontWeight: '600',
       fontSize: 18,
       color: '#374151',
+      ...style, // aplica estilo fixo com position/left
     }}
   >
-    {isMobile && (
-      <button
-        onClick={toggleSidebar}
-        aria-label="Abrir menu"
-        style={{
-          background: 'none',
-          border: 'none',
-          fontSize: 24,
-          cursor: 'pointer',
-          color: '#1e40af',
-        }}
-      >
-        ☰
-      </button>
-    )}
+    {/* ☰ botão para expandir/retrair no desktop ou abrir no mobile */}
+    <button
+      onClick={isMobile ? toggleSidebar : toggleCollapse}
+      aria-label="Menu"
+      style={{
+        background: 'none',
+        border: 'none',
+        fontSize: 24,
+        cursor: 'pointer',
+        color: '#1e40af',
+      }}
+    >
+      ☰
+    </button>
+
     <span>Olá, {userInfo?.realname || 'Usuário'} 👋</span>
     <span style={{ fontSize: 14, color: '#6b7280' }}>Sistema da Clínica</span>
   </header>
 );
 
+
 export default Header;
+

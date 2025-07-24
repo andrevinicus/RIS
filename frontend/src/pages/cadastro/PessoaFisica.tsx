@@ -10,9 +10,9 @@ const CadastroPaciente: React.FC = () => (
       minHeight: 300,
     }}
   >
-    <h2>Cadastro de Paciente</h2>
+    <h2>Pessoa Fisica</h2>
     <p>Formulário para cadastrar um novo paciente.</p>
   </div>
-);
+);  
 
 export default CadastroPaciente;
