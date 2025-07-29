@@ -26,13 +26,21 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ userInfo, onLogout }) => {
 
   const showSubCadastro = menuHover || submenuHover;
 
-  const sidebarWidth = collapsed ? 70 : 230;
+  // Calculando a largura da sidebar e a margem do conteúdo principal
+  // Se a sidebar não estiver visível, a largura será 0
+  const currentSidebarWidth = sidebarVisible ? (collapsed ? 70 : 230) : 0;
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
+      // Ao redimensionar para mobile, a sidebar deve ser escondida.
+      // Ao redimensionar de mobile para desktop, a sidebar deve ser visível.
       setSidebarVisible(!mobile);
+      // Em mobile, a sidebar também deve ser colapsada para economizar espaço
+      if (mobile) {
+        setCollapsed(true);
+      }
     };
 
     handleResize();
@@ -56,15 +64,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ userInfo, onLogout }) => {
           }}
           onLogout={onLogout}
           isMobile={isMobile}
-          closeSidebar={() => setSidebarVisible(false)}
+          closeSidebar={() => setSidebarVisible(false)} // Função para fechar completamente
           collapsed={collapsed}
           onMenuHoverStart={() => setMenuHover(true)}
           onMenuHoverEnd={() => setMenuHover(false)}
         />
       )}
 
-      {showSubCadastro && (
+      {/* Condição para SubSidebarCadastro: só mostra se sidebarVisible E showSubCadastro */}
+      {sidebarVisible && showSubCadastro && (
         <SubSidebarCadastro
+          // A SubSidebarCadastro também precisa saber a largura da sidebar principal para seu posicionamento
+          // Ou você pode ajustar seu posicionamento com base na `currentSidebarWidth` também.
+          // Por enquanto, ela mantém o `collapsed` da principal.
           collapsed={collapsed}
           onClose={() => {
             setMenuHover(false);
@@ -81,23 +93,35 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ userInfo, onLogout }) => {
           display: 'flex',
           flexDirection: 'column',
           backgroundColor: '#f3f4f6',
-          marginLeft: sidebarWidth,
+          // A margem esquerda agora é 0 se a sidebar não estiver visível
+          marginLeft: currentSidebarWidth,
           transition: 'margin-left 0.3s ease',
         }}
       >
         <Header
           userInfo={userInfo}
           isMobile={isMobile}
-          toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
-          collapsed={collapsed}
-          toggleCollapse={() => setCollapsed(!collapsed)}
+          // Quando o botão no Header é clicado para fechar/abrir a sidebar
+          // Ele alternará a visibilidade e o colapso
+          toggleSidebar={() => {
+            if (isMobile) {
+              setSidebarVisible(!sidebarVisible);
+            } else {
+              // Em desktop, alternar o colapso da sidebar
+              setCollapsed(!collapsed);
+            }
+          }}
+          collapsed={collapsed} // Passa o estado de colapso para o Header
+          toggleCollapse={() => setCollapsed(!collapsed)} // Permite que o Header controle o colapso
           style={{
             position: 'fixed',
             top: 0,
-            left: !isMobile ? (collapsed ? 70 : 240) : 0,
             right: 0,
             height: 45,
             zIndex: 1100,
+             // Ajusta a posição com base na visibilidade da sidebar
+            // O `left` do Header também deve se ajustar dinamicamente
+            left: sidebarVisible ? (collapsed ? 70 : 240) : 0,
             transition: 'left 0.3s ease',
           }}
         />
@@ -111,7 +135,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ userInfo, onLogout }) => {
             height: 'calc(100vh - 60px)',
           }}
         >
-          {/* Aqui o conteúdo da rota filha vai aparecer */}
           <Outlet />
         </main>
       </div>

@@ -1,9 +1,9 @@
-// src/router/routes.tsx
 import Login from '../pages/login/Login';
 import HomeScreenWrapper from '../pages/home/HomeScreenWrapper';
-import PessoaFisicaPage from '../pages/cadastro/PessoaFisica';
+
 import Usuarios from '../pages/cadastro/Usuarios';
 import PessoaJuridicaPage from '../pages/cadastro/PerfilClinica';
+import PessoaFisicaPage from '../pages/cadastro/PessoaFisicaPage'; // use este aqui
 
 export interface CustomRoute {
   path: string;
@@ -29,7 +29,7 @@ export const routes: CustomRoute[] = [
       {
         path: 'pessoa-fisica',
         protected: true,
-        component: PessoaFisicaPage,
+        component: PessoaFisicaPage,  // <-- aqui o componente correto
       },
       {
         path: 'pessoa-juridica',
@@ -46,3 +46,4 @@ export const routes: CustomRoute[] = [
 
   { path: '*', component: Login },
 ];
+  
