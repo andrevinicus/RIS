@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
-import Sidebar from '../../components/Sidebar/Sidebar';
-import Header from '../../components/Header/Header';
-import SubSidebarCadastro from '../../components/Sidebar/SubSidebarCadastro';
+import Sidebar from '../Sidebar/Sidebar';
+import Header from '../Header/Header';
+import SubSidebarCadastro from '../Sidebar/SubSidebarCadastro';
 
 interface UserInfo {
   realname?: string;

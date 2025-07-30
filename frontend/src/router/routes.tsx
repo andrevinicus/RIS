@@ -1,9 +1,10 @@
 import Login from '../pages/login/Login';
-import HomeScreenWrapper from '../pages/home/HomeScreenWrapper';
+import HomeScreenWrapper from '../components/home/HomeScreenWrapper';
 
 import Usuarios from '../pages/cadastro/Usuarios';
-import PessoaJuridicaPage from '../pages/cadastro/PerfilClinica';
-import PessoaFisicaPage from '../pages/cadastro/PessoaFisicaPage'; // use este aqui
+
+import PessoaFisicaPage from '../pages/cadastro/CadastroDePessoa/PessoaFisicaPage'; // use este aqui
+import PessoaJuridicaPage from '../pages/cadastro/CadastroDePessoaJuridica/PessoaJuridicaPage';
 
 export interface CustomRoute {
   path: string;
@@ -46,4 +47,3 @@ export const routes: CustomRoute[] = [
 
   { path: '*', component: Login },
 ];
-  

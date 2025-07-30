@@ -34,8 +34,8 @@ const SubSidebarCadastro: React.FC<SubSidebarCadastroProps> = ({
       style={{
         position: 'fixed',
         top: 50,
-        left: collapsed ? 70 : 235,
-        width: 240,
+        left: collapsed ? 61 : 232,
+        width: 250,
         backgroundColor: '#334e8c',
         color: 'white',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',

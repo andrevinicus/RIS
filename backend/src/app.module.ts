@@ -6,6 +6,7 @@ import { StandardsModule } from './standard/standard.module';
 import { ExamsModule } from './exams/exams.module';
 import { AuthModule } from './auth/auth.module';
 import { PersonModule } from './person/person.module';
+import { PessoaJuridicaModule } from './pessoa-juridica/pessoa-juridica.module';
 
 
 @Module({
@@ -27,7 +28,8 @@ import { PersonModule } from './person/person.module';
     StandardsModule,
     ExamsModule,
     AuthModule,
-    PersonModule, // <-- adiciona aqui
+    PersonModule,
+    PessoaJuridicaModule, // <-- adiciona aqui
   ],
 })
 export class AppModule {}
