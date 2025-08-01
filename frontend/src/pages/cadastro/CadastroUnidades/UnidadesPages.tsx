@@ -1,13 +1,14 @@
-// src/pages/PessoaJuridicaPage.tsx
+// src/pages/UnidadePage.tsx
 import React from 'react';
-import PessoaJuridicaGrid from './PessoaJuridicaGrid/PessoaJuridicaGrid';
-import FormPessoaJuridica from './PessoaJuridicaForms/FormPessoaJuridica/FormPessoaJuridica';
-import { usePessoaJuridica } from './PessoaJuridicaGrid/usePessoaJuridica';
 
 
-const PessoaJuridicaPage: React.FC = () => {
+import { useUnidade } from './HookTypes/useUnidade';
+import FormUnidadeComponent from './FormUnidade/FormUnidades';
+import UnidadeGrid from './UnidadeGrid/UnidadeGrid';
+
+const UnidadePage: React.FC = () => {
   const {
-    empresas,
+    unidades,
     form,
     isEditable,
     loading,
@@ -17,20 +18,20 @@ const PessoaJuridicaPage: React.FC = () => {
     handleCancel,
     handleSave,
     setFiltros,
-  } = usePessoaJuridica();
+  } = useUnidade();
 
   return (
     <div style={{ padding: 16 }}>
       {!isEditable && (
-        <PessoaJuridicaGrid
-          empresas={empresas}
+        <UnidadeGrid
+          unidades={unidades}
           onAddClick={handleAddClick}
           onFilterChange={setFiltros}
         />
       )}
 
       {isEditable && (
-        <FormPessoaJuridica
+        <FormUnidadeComponent
           form={form}
           isEditable={isEditable}
           loading={loading}
@@ -38,11 +39,10 @@ const PessoaJuridicaPage: React.FC = () => {
           handleChange={handleChange}
           handleCancel={handleCancel}
           handleSave={handleSave}
-          handleAddClick={handleAddClick}
         />
       )}
     </div>
   );
 };
 
-export default PessoaJuridicaPage;
+export default UnidadePage;

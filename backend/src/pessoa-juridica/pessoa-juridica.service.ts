@@ -14,15 +14,16 @@ export class PessoaJuridicaService {
   ) {}
 
   // Método para gerar o próximo código sequencial
-  private async gerarProximoCodigo(): Promise<string> {
-    const result = await this.pjRepository
-      .createQueryBuilder('pj')
-      .select('MAX(CAST(pj.codigo AS INTEGER))', 'max')
-      .getRawOne();
+private async gerarProximoCodigo(): Promise<string> {
+  const result = await this.pjRepository
+    .createQueryBuilder('unidade')
+    .select('MAX(CAST(unidade.codUnidade AS INTEGER))', 'max')
+    .getRawOne();
 
-    const maiorCodigo = result?.max ?? 0;
-    return (maiorCodigo + 1).toString();
-  }
+  const maiorCodigo = result?.max ?? 0;
+  return (parseInt(maiorCodigo) + 1).toString().padStart(4, '0');
+}
+
 
   async create(data: CreatePessoaJuridicaDto): Promise<PessoaJuridica> {
     const codigo = await this.gerarProximoCodigo();

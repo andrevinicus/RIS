@@ -1,5 +1,6 @@
 import { User } from 'src/auth/entities/auth.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, Generated } from 'typeorm';
+import { Unidade } from 'src/unidade/entities/unidade.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, Generated, ManyToOne } from 'typeorm';
 
 @Entity('persons')
 export class Person {
@@ -91,4 +92,11 @@ export class Person {
   @OneToOne(() => User, (user) => user.person)
   @JoinColumn()
   user: User;
+
+  @Column({ nullable: true })
+  codigoUnidade: string; 
+
+  @ManyToOne(() => Unidade, unidade => unidade.pessoas)
+  @JoinColumn({ name: 'codigoUnidade', referencedColumnName: 'codUnidade' })
+  unidade: Unidade;
 }

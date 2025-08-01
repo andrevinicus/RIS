@@ -1,12 +1,13 @@
 // src/pessoa-juridica/entities/pessoa-juridica.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Unidade } from 'src/unidade/entities/unidade.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('pessoas_juridicas')
 export class PessoaJuridica {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true, nullable: true })
+  @Column({ unique: true})
   codigo: string;
 
   @Column()
@@ -54,6 +55,13 @@ export class PessoaJuridica {
   @Column({ nullable: true })
   responsavel: string;
 
+  @Column({ nullable: true })
+  codigoUnidade: string;  // aqui você guarda o codEmpresa da unidade
+
   @Column({ nullable: true, type: 'text' })
   observacoes: string;
+
+  @ManyToOne(() => Unidade, unidade => unidade.pessoasJuridicas)
+  @JoinColumn({ name: 'codigoUnidade', referencedColumnName: 'codUnidade' })
+  unidade: Unidade;
 }

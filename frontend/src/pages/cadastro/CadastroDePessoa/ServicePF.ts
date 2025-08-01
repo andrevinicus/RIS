@@ -52,17 +52,24 @@ export async function fetchPessoaById(id: string) {
 }
 
 export async function savePessoa(data: any, id?: string) {
+  // Se for criação (POST), remova id do objeto para não enviar
+  const dataToSend = { ...data };
+  if (!id && 'id' in dataToSend) {
+    delete dataToSend.id;
+  }
+
   const url = id ? `${API_URL}/api/pessoas/${id}` : `${API_URL}/api/pessoas`;
   const method = id ? 'PUT' : 'POST';
 
   const result = await fetchJson(url, {
     method,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    body: JSON.stringify(dataToSend),
   });
   console.log(`[savePessoa] Resposta da API para ${method} em ${url}:`, result);
   return result;
 }
+
 
 export async function deletePessoa(id: string) {
   if (!id) throw new Error('ID inválido para exclusão');

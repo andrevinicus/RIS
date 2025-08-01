@@ -19,22 +19,21 @@ export const TopBar = styled.div`
 export const Button = styled.button`
   padding: 8px 16px;
   border-radius: 6px;
-  background-color: #007bff;
+  background-color: #0069d9; /* Diferente do azul do PJ, só para exemplo */
   border: none;
   color: white;
   cursor: pointer;
   font-weight: 600;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #004a9f;
   }
 `;
 
 export const FilterButton = styled(Button)`
-  background-color: #28a745;
-
+  background-color: #218838; /* verde diferente do PJ */
   &:hover {
-    background-color: #1e7e34;
+    background-color: #19692c;
   }
 `;
 
@@ -58,12 +57,12 @@ export const FilterContainer = styled.div`
   margin-top: 8px;
   display: flex;
   gap: 8px;
-  align-items: center;
+  flex-wrap: wrap;
 `;
 
 export const InputFilter = styled.input`
   padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  width: 150px;
+  width: 200px;
 `;

@@ -69,4 +69,8 @@ export class CreatePessoaJuridicaDto {
   @IsOptional()
   @IsString()
   observacoes?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  codigoUnidade: string;
 }

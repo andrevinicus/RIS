@@ -1,19 +1,9 @@
 import React, { useState } from 'react';
 import { FaFilter } from 'react-icons/fa';
 import { PessoaFisica } from './types';
+import { Button, Container, FilterButton, FilterContainer, InputFilter, Table, Td, Th, TopBar } from '../../CadastroDePessoaJuridica/PessoaJuridicaGrid/stylesComponent';
 
-// Importa os estilos separados
-import {
-  Container,
-  TopBar,
-  Button,
-  FilterButton,
-  Table,
-  Th,
-  Td,
-  FilterContainer,
-  InputFilter,
-} from './PessoaFisicaGrid.styles';
+
 
 interface PessoaFisicaGridProps {
   pessoas: PessoaFisica[];

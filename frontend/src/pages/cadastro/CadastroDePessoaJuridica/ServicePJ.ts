@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { PessoaJuridica } from "./PessoaJuridicaForms/types";
 
 const API_URL = 'http://localhost:3000/pessoas-juridicas';
@@ -9,52 +10,37 @@ export async function fetchPessoasJuridicas(filters: {
   razao_social?: string;
   nome_fantasia?: string;
 } = {}): Promise<PessoaJuridica[]> {
-  const params = new URLSearchParams();
-
-  if (filters.codigo) params.append('codigo', filters.codigo);
-  if (filters.cnpj) params.append('cnpj', filters.cnpj);
-  if (filters.razao_social) params.append('razao_social', filters.razao_social);
-  if (filters.nome_fantasia) params.append('nome_fantasia', filters.nome_fantasia);
-
-  const url = params.toString() ? `${API_URL}?${params.toString()}` : API_URL;
-
-  const response = await fetch(url);
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Erro ao buscar pessoas jurídicas: ${text}`);
-  }
-
-  return await response.json();
+  // Axios já monta o query string a partir do objeto params
+  const response = await axios.get<PessoaJuridica[]>(API_URL, { params: filters });
+  return response.data;
 }
+
+// Buscar pessoa jurídica por ID
 export async function fetchPessoaJuridicaById(id: string): Promise<PessoaJuridica | null> {
-  const response = await fetch(`${API_URL}/${id}`);
-  if (!response.ok) {
-    if (response.status === 404) return null;
-    const text = await response.text();
-    throw new Error(`Erro ao buscar pessoa jurídica: ${text}`);
+  try {
+    const response = await axios.get<PessoaJuridica>(`${API_URL}/${id}`);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return null;
+    }
+    console.error('Erro ao buscar pessoa jurídica:', error);
+    throw error;
   }
-  return await response.json();
 }
 
-// Criar ou atualizar uma pessoa jurídica
+// Criar ou atualizar pessoa jurídica
 export async function savePessoaJuridica(data: PessoaJuridica, id?: string): Promise<PessoaJuridica | null> {
-  const method = id ? 'PUT' : 'POST';
-  const url = id ? `${API_URL}/${id}` : API_URL;
+  try {
+    const payload = id ? data : { ...data, id: undefined };
 
-  // Remover 'id' do payload se for criação (POST)
-  const payload = id ? data : { ...data, id: undefined };
+    const response = id
+      ? await axios.put<PessoaJuridica>(`${API_URL}/${id}`, payload)
+      : await axios.post<PessoaJuridica>(API_URL, payload);
 
-  const response = await fetch(url, {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    console.error('Erro ao salvar pessoa jurídica:', text);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao salvar pessoa jurídica:', error);
     return null;
   }
-
-  return await response.json();
 }

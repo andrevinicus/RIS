@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 
 export class CreatePersonDto {
+
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -115,7 +116,5 @@ export class CreatePersonDto {
   @IsString()
   observations?: string;
 
-  @IsOptional()
-  @IsString()
-  userId?: string; // opcional: associar a um usuário existente
+
 }

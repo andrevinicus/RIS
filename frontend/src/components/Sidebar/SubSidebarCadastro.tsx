@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { cadastroSubItems } from './cadastroSubItems';
 
 interface SubSidebarCadastroProps {
   collapsed: boolean;
@@ -8,11 +9,6 @@ interface SubSidebarCadastroProps {
   onMouseLeave?: () => void;
 }
 
-const cadastroSubItems = [
-  { key: 'PessoaFisica', label: 'Pessoa Física', path: '/cadastro/pessoa-fisica' },
-  { key: 'PessoaJuridica', label: 'Pessoa Jurídica', path: '/cadastro/pessoa-juridica' },
-  { key: 'Usuarios', label: 'Usuários', path: '/cadastro/usuarios' },
-];
 
 const SubSidebarCadastro: React.FC<SubSidebarCadastroProps> = ({
   collapsed,

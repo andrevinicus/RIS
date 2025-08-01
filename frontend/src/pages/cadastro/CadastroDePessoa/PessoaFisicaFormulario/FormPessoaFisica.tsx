@@ -1,8 +1,7 @@
-// src/PessoaFisicaFormulario/FormPessoaFisica.tsx
 import React from 'react';
 import styled from 'styled-components';
 import InputText from './InputField';
-
+// seu componente input aprimorado
 
 interface FormularioPessoaFisica {
   id: string;
@@ -38,7 +37,9 @@ interface FormPessoaFisicaProps {
   isEditable: boolean;
   loading: boolean;
   error: string | null;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  handleChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => void;
   handleAddClick: () => void;
   handleCancel: () => void;
   handleSave: () => void;
@@ -119,6 +120,28 @@ const ErrorMessage = styled.div`
   margin-top: 16px;
 `;
 
+const Select = styled.select<{ disabled?: boolean }>`
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.2);
+  background-color: ${({ disabled }) => (disabled ? '#f9f9f9' : '#fff')};
+  box-sizing: border-box;
+  font-size: 14px;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'auto')};
+`;
+
+const GridContainer: React.FC<{
+  columns: string;
+  gap?: string;
+  marginTop?: string;
+  children: React.ReactNode;
+}> = ({ columns, gap = '16px', marginTop = '16px', children }) => (
+  <StyledGridContainer columns={columns} gap={gap} marginTop={marginTop}>
+    {children}
+  </StyledGridContainer>
+);
+
 const FormPessoaFisica: React.FC<FormPessoaFisicaProps> = ({
   form,
   idade,
@@ -130,22 +153,6 @@ const FormPessoaFisica: React.FC<FormPessoaFisicaProps> = ({
   handleCancel,
   handleSave,
 }) => {
-  const GridContainer = ({
-    columns,
-    gap = '16px',
-    marginTop = '16px',
-    children,
-  }: {
-    columns: string;
-    gap?: string;
-    marginTop?: string;
-    children: React.ReactNode;
-  }) => (
-    <StyledGridContainer columns={columns} gap={gap} marginTop={marginTop}>
-      {children}
-    </StyledGridContainer>
-  );
-
   return (
     <FormularioContainer>
       <HeaderContainer>
@@ -173,30 +180,22 @@ const FormPessoaFisica: React.FC<FormPessoaFisicaProps> = ({
           onChange={handleChange}
           disabled={!isEditable}
         />
+
         <label style={{ display: 'flex', flexDirection: 'column' }}>
           <span style={{ marginBottom: 4, color: 'rgba(0,0,0,0.6)', fontSize: 14, userSelect: 'none' }}>Sexo</span>
-          <select
+          <Select
             name="sex"
             value={form?.sex}
             onChange={handleChange}
             disabled={!isEditable}
-            style={{
-              width: '100%',
-              padding: '8px 12px',
-              borderRadius: 8,
-              border: '1px solid rgba(0, 0, 0, 0.2)',
-              backgroundColor: isEditable ? '#fff' : '#f9f9f9',
-              boxSizing: 'border-box',
-              minHeight: '38px',
-              cursor: isEditable ? 'auto' : 'not-allowed',
-            }}
           >
             <option value="">Selecione</option>
             <option value="Masculino">Masculino</option>
             <option value="Feminino">Feminino</option>
             <option value="Outro">Outro</option>
-          </select>
+          </Select>
         </label>
+
         <InputText label="Email" name="email" value={form?.email} onChange={handleChange} disabled={!isEditable} />
         <InputText label="DDD + Telefone" name="phone_mobile_number" value={form?.phone_mobile_number} onChange={handleChange} disabled={!isEditable} />
         <InputText label="DDD + Trabalho" name="phone_work_number" value={form?.phone_work_number} onChange={handleChange} disabled={!isEditable} />
@@ -205,23 +204,14 @@ const FormPessoaFisica: React.FC<FormPessoaFisicaProps> = ({
       <GridContainer columns="repeat(auto-fit, minmax(120px, 1fr))">
         <InputText label="Peso" name="weight" value={form?.weight} onChange={handleChange} disabled={!isEditable} />
         <InputText label="Altura" name="height" value={form?.height} onChange={handleChange} disabled={!isEditable} />
+
         <label style={{ display: 'flex', flexDirection: 'column' }}>
           <span style={{ marginBottom: 4, color: 'rgba(0,0,0,0.6)', fontSize: 14, userSelect: 'none' }}>Estado Civil</span>
-          <select
+          <Select
             name="marital_status"
             value={form?.marital_status}
             onChange={handleChange}
             disabled={!isEditable}
-            style={{
-              width: '100%',
-              padding: '8px 12px',
-              borderRadius: 8,
-              border: '1px solid rgba(0, 0, 0, 0.2)',
-              backgroundColor: isEditable ? '#fff' : '#f9f9f9',
-              boxSizing: 'border-box',
-              minHeight: '38px',
-              cursor: isEditable ? 'auto' : 'not-allowed',
-            }}
           >
             <option value="">Selecione</option>
             <option value="Solteiro">Solteiro(a)</option>
@@ -229,8 +219,9 @@ const FormPessoaFisica: React.FC<FormPessoaFisicaProps> = ({
             <option value="Divorciado">Divorciado(a)</option>
             <option value="Viúvo">Viúvo(a)</option>
             <option value="Outro">Outro</option>
-          </select>
+          </Select>
         </label>
+
         <InputText label="Nome da Mãe" name="mother_name" value={form?.mother_name} onChange={handleChange} disabled={!isEditable} />
         <InputText label="Nome do Pai" name="father_name" value={form?.father_name} onChange={handleChange} disabled={!isEditable} />
       </GridContainer>

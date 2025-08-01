@@ -26,11 +26,11 @@ export class PersonController {
     return this.personService.findById(id);
   }
 
-  @Post()
-  async create(@Body() data: CreatePersonDto): Promise<Person> {
-    return this.personService.create(data);
-  }
-
+@Post()
+async create(@Body() data: CreatePersonDto): Promise<Person> {
+  if ('id' in data) delete data.id; // REMOVE o id se existir
+  return this.personService.create(data);
+}
   @Put(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,

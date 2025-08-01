@@ -13,7 +13,7 @@ import {
   Td,
   FilterContainer,
   InputFilter,
-} from './PessoaJuridicaGrid.styles';
+} from './stylesComponent';
 
 interface PessoaJuridicaGridProps {
   empresas: PessoaJuridica[];

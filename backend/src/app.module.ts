@@ -7,6 +7,7 @@ import { ExamsModule } from './exams/exams.module';
 import { AuthModule } from './auth/auth.module';
 import { PersonModule } from './person/person.module';
 import { PessoaJuridicaModule } from './pessoa-juridica/pessoa-juridica.module';
+import { UnidadeModule } from './unidade/unidade.module';
 
 
 @Module({
@@ -29,7 +30,8 @@ import { PessoaJuridicaModule } from './pessoa-juridica/pessoa-juridica.module';
     ExamsModule,
     AuthModule,
     PersonModule,
-    PessoaJuridicaModule, // <-- adiciona aqui
+    PessoaJuridicaModule,
+    UnidadeModule, // <-- adiciona aqui
   ],
 })
 export class AppModule {}

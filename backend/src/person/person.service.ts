@@ -12,14 +12,13 @@ export class PersonService {
     private personRepository: Repository<Person>,
   ) {}
 
-  async create(data: CreatePersonDto): Promise<Person> {
-    console.log('create: criando pessoa com dados:', data);
-    const person = this.personRepository.create(data);
-    const savedPerson = await this.personRepository.save(person);
-    console.log('create: pessoa criada:', savedPerson);
-    return savedPerson;
-  }
-
+async create(data: CreatePersonDto): Promise<Person> {
+  console.log('create: criando pessoa com dados:', data);
+  const person = this.personRepository.create(data);
+  const savedPerson = await this.personRepository.save(person);
+  console.log('create: pessoa criada:', savedPerson);
+  return savedPerson;
+}
   async findAll(): Promise<Person[]> {
     console.log('findAll: buscando todas as pessoas');
     const pessoas = await this.personRepository.find({ relations: ['user'] });

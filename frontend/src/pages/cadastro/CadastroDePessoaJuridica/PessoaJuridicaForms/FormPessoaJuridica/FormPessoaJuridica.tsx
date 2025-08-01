@@ -9,8 +9,9 @@ import {
   SaveButton,
   ErrorMessage,
 } from './FormPessoaJuridica.styles';
-import InputText from '../InputField';
+
 import { PessoaJuridica } from '../types';
+import InputText from './InputField';
 
 interface FormPessoaJuridicaProps {
   form: PessoaJuridica;
@@ -30,7 +31,7 @@ const GridContainer: React.FC<{
   gap?: string;
   marginTop?: string;
   children: React.ReactNode;
-}> = ({ columns, gap = '16px', marginTop = '16px', children }) => (
+}> = ({ columns, gap = '16px', marginTop = '5px', children }) => (
   <StyledGridContainer columns={columns} gap={gap} marginTop={marginTop}>
     {children}
   </StyledGridContainer>
