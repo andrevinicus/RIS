@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { PessoaJuridica } from '../PessoaJuridicaForms/types';
-import { fetchPessoaJuridicaById, fetchPessoasJuridicas, savePessoaJuridica } from '../ServicePJ';
+import { deletePessoaJuridica, fetchPessoaJuridicaById, fetchPessoasJuridicas, savePessoaJuridica } from '../ServicePJ';
+import PessoaJuridicaGrid from './PessoaJuridicaGrid';
 
 const FORMULARIO_VAZIO: PessoaJuridica = {
   id: '',
@@ -127,6 +128,27 @@ const loadEmpresas = useCallback(async () => {
       setLoading(false);
     }
   };
+  const handleDelete = useCallback(async (id: string) => {
+  setLoading(true);
+  try {
+    await deletePessoaJuridica(id);
+    setEmpresas((prev) => prev.filter((e) => e.id !== id));
+    setForm(FORMULARIO_VAZIO);
+    setSelected(null);
+    setIsEditable(false);
+  } catch (error) {
+    console.error('Erro ao excluir empresa:', error);
+    setError('Erro ao excluir.');
+  } finally {
+    setLoading(false);
+  }
+}, []);
+  const handleEditClick = useCallback((PessoaJuridicaGrid: PessoaJuridica) => {
+    setSelected(PessoaJuridicaGrid);
+    setForm(PessoaJuridicaGrid);
+    setIsEditable(true);
+    setError(null);
+  }, []);
 
   return {
     empresas,
@@ -140,6 +162,8 @@ const loadEmpresas = useCallback(async () => {
     handleCancel,
     handleSave,
     handleEmpresaClick,
+    handleEditClick,
+    handleDelete,
     setFiltros,
   };
 };

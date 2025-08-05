@@ -1,24 +1,25 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Modal from 'react-modal';
-import { fetchPessoas } from '../../CadastroDePessoa/ServicePF';
-import { PessoaFisica } from '../../CadastroDePessoa/PessoaFisicaGrid/types';
+import { fetchUnidades } from '../CadastroUnidades/ServiceUnidade';
+import { Unidade } from '../CadastroUnidades/HookTypes/types';
 
 Modal.setAppElement('#root');
 
-interface ModalPessoaFisicaProps {
+interface ModalUnidadeProps {
   isOpen: boolean;
   onRequestClose: () => void;
-  onSelecionarPessoaFisica: (pessoa: PessoaFisica) => void;
+  onSelecionarUnidade: (unidade: Unidade) => void;
 }
 
-const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
+const ModalUnidade: React.FC<ModalUnidadeProps> = ({
   isOpen,
   onRequestClose,
-  onSelecionarPessoaFisica,
+  onSelecionarUnidade,
 }) => {
   const [filtroNome, setFiltroNome] = useState('');
   const [filtroCodigo, setFiltroCodigo] = useState('');
-  const [pessoas, setPessoas] = useState<PessoaFisica[]>([]);
+  const [filtroMunicipio, setFiltroMunicipio] = useState('');
+  const [unidades, setUnidades] = useState<Unidade[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,9 +27,10 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
 
   useEffect(() => {
     if (!isOpen) {
-      setPessoas([]);
+      setUnidades([]);
       setFiltroNome('');
       setFiltroCodigo('');
+      setFiltroMunicipio('');
       setError(null);
       return;
     }
@@ -39,25 +41,28 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
       setLoading(true);
       setError(null);
 
-      fetchPessoas({
+      fetchUnidades({
         nome: filtroNome.trim() !== '' ? filtroNome : undefined,
-        codigo: filtroCodigo.trim() !== '' ? filtroCodigo : undefined,
+        codUnidade: filtroCodigo.trim() !== '' ? filtroCodigo : undefined,
+        municipio: filtroMunicipio.trim() !== '' ? filtroMunicipio : undefined,
       })
-        .then(res => setPessoas(res))
-        .catch(err => setError(err.message || 'Erro ao carregar pessoas físicas'))
+        .then(setUnidades)
+        .catch(err =>
+          setError(err.message || 'Erro ao carregar unidades')
+        )
         .finally(() => setLoading(false));
     }, 500);
 
     return () => {
       if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
     };
-  }, [filtroNome, filtroCodigo, isOpen]);
+  }, [filtroNome, filtroCodigo, filtroMunicipio, isOpen]);
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      contentLabel="Selecionar Pessoa Física"
+      contentLabel="Selecionar Unidade"
       style={{
         content: {
           maxWidth: 580,
@@ -84,10 +89,10 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
     >
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', flex: 1 }}>
         <h2 style={{ marginBottom: 16, fontWeight: 600, color: '#333' }}>
-          Buscar Pessoa Física
+          Buscar Unidade
         </h2>
 
-        <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+        <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
           <input
             type="text"
             value={filtroNome}
@@ -95,6 +100,7 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
             placeholder="Filtrar por nome"
             style={{
               flex: 1,
+              minWidth: 200,
               padding: '10px 14px',
               borderRadius: 8,
               border: '1.5px solid #ccc',
@@ -107,7 +113,20 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
             onChange={e => setFiltroCodigo(e.target.value)}
             placeholder="Filtrar por código"
             style={{
-              width: 150,
+              width: 180,
+              padding: '10px 14px',
+              borderRadius: 8,
+              border: '1.5px solid #ccc',
+              fontSize: 16,
+            }}
+          />
+          <input
+            type="text"
+            value={filtroMunicipio}
+            onChange={e => setFiltroMunicipio(e.target.value)}
+            placeholder="Filtrar por município"
+            style={{
+              width: 180,
               padding: '10px 14px',
               borderRadius: 8,
               border: '1.5px solid #ccc',
@@ -119,7 +138,7 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {loading && <p style={{ textAlign: 'center', color: '#666' }}>Carregando...</p>}
           {error && <p style={{ textAlign: 'center', color: 'crimson' }}>{error}</p>}
-          {!loading && !error && pessoas.length === 0 && (
+          {!loading && !error && unidades.length === 0 && (
             <p style={{ textAlign: 'center', color: '#666' }}>Nenhum resultado.</p>
           )}
 
@@ -132,11 +151,11 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
               borderBottom: '1px solid #eee',
             }}
           >
-            {pessoas.slice(0, 8).map(pessoa => (
-              <li key={pessoa.codigo} style={{ marginBottom: 10 }}>
+            {unidades.slice(0, 8).map(unidade => (
+              <li key={unidade.codUnidade} style={{ marginBottom: 10 }}>
                 <button
                   onClick={() => {
-                    onSelecionarPessoaFisica(pessoa);
+                    onSelecionarUnidade(unidade);
                     onRequestClose();
                   }}
                   style={{
@@ -159,8 +178,10 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
                   }
                   type="button"
                 >
-                  <strong>{pessoa.name}</strong>{' '}
-                  <small style={{ color: '#666' }}>(Código: {pessoa.codigo})</small>
+                  <strong>{unidade.nome}</strong>{' '}
+                  <small style={{ color: '#666' }}>
+                    (Código: {unidade.codUnidade})
+                  </small>
                 </button>
               </li>
             ))}
@@ -192,4 +213,4 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
   );
 };
 
-export default ModalPessoaFisica;
+export default ModalUnidade;

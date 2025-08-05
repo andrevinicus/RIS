@@ -18,7 +18,4 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  @OneToOne(() => Person, (person) => person.user, { eager: true })
-  @JoinColumn()
-  person: Person; // FK para pessoa física
 }

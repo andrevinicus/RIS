@@ -1,4 +1,4 @@
-// src/cadastro/PessoaJuridicaForms/FormPessoaJuridica.styles.ts
+// FormPessoaFisica.styles.ts
 import styled from 'styled-components';
 
 export const FormularioContainer = styled.div`
@@ -30,7 +30,6 @@ export const AddButton = styled.button`
   color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 
   &:hover {
     background-color: #0056b3;
@@ -72,8 +71,18 @@ export const SaveButton = styled.button`
   }
 `;
 
-
 export const ErrorMessage = styled.div`
   color: red;
   margin-top: 16px;
+`;
+
+export const Select = styled.select<{ disabled?: boolean }>`
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.2);
+  background-color: ${({ disabled }) => (disabled ? '#f9f9f9' : '#fff')};
+  box-sizing: border-box;
+  font-size: 14px;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'auto')};
 `;

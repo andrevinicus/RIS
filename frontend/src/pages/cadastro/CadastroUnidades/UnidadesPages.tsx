@@ -17,6 +17,8 @@ const UnidadePage: React.FC = () => {
     handleAddClick,
     handleCancel,
     handleSave,
+    handleEditClick,
+    handleDeleteClick,
     setFiltros,
   } = useUnidade();
 
@@ -26,6 +28,8 @@ const UnidadePage: React.FC = () => {
         <UnidadeGrid
           unidades={unidades}
           onAddClick={handleAddClick}
+          onEditClick={handleEditClick}
+          onDeleteClick={handleDeleteClick}
           onFilterChange={setFiltros}
         />
       )}

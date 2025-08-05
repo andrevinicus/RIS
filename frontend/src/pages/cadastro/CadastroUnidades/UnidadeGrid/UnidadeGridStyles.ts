@@ -40,7 +40,13 @@ export const FilterButton = styled(Button)`
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+
+  tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* azul transparente suave */
+    cursor: pointer;
+  }
+  
+  /* Outras regras já existentes */
 `;
 
 export const Th = styled.th`

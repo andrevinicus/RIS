@@ -39,9 +39,8 @@ async create(dto: CreateUnidadeDto): Promise<Unidade> {
 
 
   // Agora recebe filtros opcionais
-  async findAll(filtros?: { nome?: string; cnpj?: string; municipio?: string }): Promise<Unidade[]> {
+  async findAll(filtros?: { nome?: string; cnpj?: string; municipio?: string; codUnidade?: string }): Promise<Unidade[]> {
     const query = this.unidadeRepository.createQueryBuilder('unidade');
-
     if (filtros) {
       if (filtros.nome) {
         query.andWhere('unidade.nome ILIKE :nome', { nome: `%${filtros.nome}%` });
@@ -51,6 +50,9 @@ async create(dto: CreateUnidadeDto): Promise<Unidade> {
       }
       if (filtros.municipio) {
         query.andWhere('unidade.municipio ILIKE :municipio', { municipio: `%${filtros.municipio}%` });
+      }
+      if (filtros.codUnidade) {
+        query.andWhere('unidade.codUnidade ILIKE :codUnidade', { codUnidade: `%${filtros.codUnidade}%` });
       }
     }
 

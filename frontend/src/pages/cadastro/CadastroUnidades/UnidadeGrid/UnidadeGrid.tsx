@@ -1,18 +1,35 @@
 import React, { useState } from 'react';
-
 import { FaFilter } from 'react-icons/fa';
 import { Unidade } from '../HookTypes/types';
-import { Button, Container, FilterButton, FilterContainer, InputFilter, Table, Td, Th, TopBar } from './UnidadeGridStyles';
+import {
+  Container,
+  TopBar,
+  FilterButton,
+  FilterContainer,
+  InputFilter,
+  Table,
+  Td,
+  Th,
+} from './UnidadeGridStyles';
 
 interface UnidadeGridProps {
   unidades: Unidade[];
   onFilterChange: (filtros: { nome?: string; cnpj?: string; municipio?: string }) => void;
-  onAddClick: () => void; // obrigatória para evitar erro
+  onAddClick: () => void;
+  onEditClick: (unidade: Unidade) => void;
+  onDeleteClick: (codUnidade: string) => void;
 }
 
-const UnidadeGrid: React.FC<UnidadeGridProps> = ({ unidades = [], onFilterChange, onAddClick }) => {
+const UnidadeGrid: React.FC<UnidadeGridProps> = ({
+  unidades = [],
+  onFilterChange,
+  onAddClick,
+  onEditClick,
+  onDeleteClick,
+}) => {
   const [filtroAberto, setFiltroAberto] = useState(false);
   const [filtros, setFiltros] = useState({ nome: '', cnpj: '', codUnidade: '' });
+  const [unidadeSelecionada, setUnidadeSelecionada] = useState<Unidade | null>(null);
 
   const toggleFiltro = () => setFiltroAberto(prev => !prev);
 
@@ -25,20 +42,44 @@ const UnidadeGrid: React.FC<UnidadeGridProps> = ({ unidades = [], onFilterChange
     onFilterChange(filtros);
   };
 
-  const listaUnidades = Array.isArray(unidades) ? unidades : [];
+  const handleSelecionar = (unidade: Unidade) => {
+    setUnidadeSelecionada(prev =>
+      prev?.codUnidade === unidade.codUnidade ? null : unidade
+    );
+  };
 
   return (
     <Container>
       <TopBar>
-        <Button onClick={onAddClick}>Adicionar</Button>
-
-        <FilterButton
-          onClick={toggleFiltro}
-          aria-expanded={filtroAberto}
-          aria-controls="filter-container"
-        >
-          <FaFilter style={{ marginRight: 6 }} aria-hidden="true" /> Filtrar
+        <FilterButton onClick={toggleFiltro}>
+          <FaFilter style={{ marginRight: 6 }} /> Filtrar
         </FilterButton>
+
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{ color: 'blue', cursor: 'pointer' }} onClick={onAddClick}>
+            Adicionar
+          </span>
+          <span
+            style={{
+              color: unidadeSelecionada ? 'blue' : 'gray',
+              cursor: unidadeSelecionada ? 'pointer' : 'not-allowed',
+            }}
+            onClick={() => unidadeSelecionada && onEditClick(unidadeSelecionada)}
+          >
+            Editar
+          </span>
+          <span
+            style={{
+              color: unidadeSelecionada ? 'blue' : 'gray',
+              cursor: unidadeSelecionada ? 'pointer' : 'not-allowed',
+            }}
+            onClick={() =>
+              unidadeSelecionada && onDeleteClick(unidadeSelecionada.codUnidade)
+            }
+          >
+            Excluir
+          </span>
+        </div>
       </TopBar>
 
       {filtroAberto && (
@@ -46,7 +87,7 @@ const UnidadeGrid: React.FC<UnidadeGridProps> = ({ unidades = [], onFilterChange
           <InputFilter
             type="text"
             name="cnpj"
-            placeholder="iltrar por CNPJ"
+            placeholder="Filtrar por CNPJ"
             value={filtros.cnpj}
             onChange={handleChange}
             autoComplete="off"
@@ -61,19 +102,33 @@ const UnidadeGrid: React.FC<UnidadeGridProps> = ({ unidades = [], onFilterChange
           />
           <InputFilter
             type="text"
-            name="Codigo da Unidade"
-            placeholder="Filtrar da Unidade"
+            name="codUnidade"
+            placeholder="Filtrar Código da Unidade"
             value={filtros.codUnidade}
             onChange={handleChange}
             autoComplete="off"
           />
-          <Button onClick={handlePesquisar}>Pesquisar</Button>
+          <span
+            style={{
+              backgroundColor: '#007bff',
+              color: 'white',
+              padding: '6px 12px',
+              borderRadius: 4,
+              cursor: 'pointer',
+              display: 'inline-block',
+              marginTop: 8,
+            }}
+            onClick={handlePesquisar}
+          >
+            Pesquisar
+          </span>
         </FilterContainer>
       )}
 
       <Table>
         <thead>
           <tr>
+            <Th></Th>
             <Th>Código</Th>
             <Th>Nome</Th>
             <Th>CNPJ</Th>
@@ -82,15 +137,22 @@ const UnidadeGrid: React.FC<UnidadeGridProps> = ({ unidades = [], onFilterChange
           </tr>
         </thead>
         <tbody>
-          {listaUnidades.length === 0 ? (
+          {unidades.length === 0 ? (
             <tr>
-              <Td colSpan={5} style={{ textAlign: 'center' }}>
+              <Td colSpan={6} style={{ textAlign: 'center' }}>
                 Nenhuma unidade cadastrada.
               </Td>
             </tr>
           ) : (
-            listaUnidades.map(u => (
+            unidades.map(u => (
               <tr key={u.codUnidade}>
+                <Td>
+                  <input
+                    type="checkbox"
+                    checked={unidadeSelecionada?.codUnidade === u.codUnidade}
+                    onChange={() => handleSelecionar(u)}
+                  />
+                </Td>
                 <Td>{u.codUnidade}</Td>
                 <Td>{u.nomeReduzido}</Td>
                 <Td>{u.cnpj}</Td>

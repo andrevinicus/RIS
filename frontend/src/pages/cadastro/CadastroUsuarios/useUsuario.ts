@@ -4,18 +4,20 @@ import { fetchUnidades } from '../CadastroUnidades/ServiceUnidade';
 import { Usuario } from './types';
 import { Unidade } from '../CadastroUnidades/HookTypes/types';
 
-const FORM_VAZIO: Omit<Usuario, 'unidadePadrao' | 'unidades' | 'usuarioCriacao' | 'dataCriacao'> = {
+const FORM_VAZIO: Omit<Usuario, "unidades" | "usuarioCriacao" > = {
   codigo: '',
   nomeCompleto: '',
   usuario: '',
   senha: '',
   email: '',
   unidadePadraoId: '',
+  unidadePadrao: '',
   situacao: 'ativo',
   setor: '',
   paginaInicial: '',
   pessoaFisicaId: '',
   pessoaFisicanome: '',
+  dataCriacao: new Date().toISOString(),
 };
 
 export function useUsuario() {
@@ -52,23 +54,26 @@ export function useUsuario() {
     setError(null);
   };
 
-  const handleEditClick = (usuario: Usuario) => {
-    setForm({
-      codigo: usuario.codigo,
-      nomeCompleto: usuario.nomeCompleto,
-      usuario: usuario.usuario,
-      senha: '', // não exibe senha antiga por segurança
-      email: usuario.email,
-      unidadePadraoId: usuario.unidadePadrao?.codigo || '',
-      situacao: usuario.situacao,
-      setor: usuario.setor || '',
-      paginaInicial: usuario.paginaInicial || '',
-      pessoaFisicaId: usuario.pessoaFisicaId || '',
-    });
-    setEditandoCodigo(usuario.codigo);
-    setShowForm(true);
-    setError(null);
-  };
+const handleEditClick = (usuario: Usuario) => {
+  setForm({
+    codigo: usuario.codigo,
+    nomeCompleto: usuario.nomeCompleto,
+    usuario: usuario.usuario,
+    senha: '', // não exibe senha antiga por segurança
+    email: usuario.email,
+    unidadePadraoId: usuario.unidadePadraoId,
+    unidadePadrao: usuario.unidadePadrao || '',  // **importante**
+    situacao: usuario.situacao,
+    setor: usuario.setor || '',
+    paginaInicial: usuario.paginaInicial || '',
+    pessoaFisicaId: usuario.pessoaFisicaId || '',
+    pessoaFisicanome: usuario.pessoaFisicanome || '',
+    dataCriacao: usuario.dataCriacao || '',
+  });
+  setEditandoCodigo(usuario.codigo);
+  setShowForm(true);
+  setError(null);
+};
 
   const handleDeleteClick = async (codigo: string) => {
     if (!window.confirm('Confirma exclusão?')) return;
@@ -107,12 +112,20 @@ export function useUsuario() {
     }
   };
   const handleSelecionarPessoaFisica = (pessoa: { codigo: string; nome: string }) => {
-  setForm(prev => ({
-    ...prev,
-    pessoaFisicaId: pessoa.codigo,
-    pessoaFisicanome: pessoa.nome,
-  }));
-};
+    setForm(prev => ({
+      ...prev,
+      pessoaFisicaId: pessoa.codigo,
+      pessoaFisicanome: pessoa.nome,
+    }));
+  };
+  const handleSelecionarUnidade = (unidade: { codUnidade: string; nomeUnidade: string }) => {
+    setForm(prev => ({
+      ...prev,
+        unidadePadraoId: unidade.codUnidade,
+        unidadePadrao: unidade.nomeUnidade,
+      
+    }));
+  };
 
   return {
     usuarios,
@@ -128,5 +141,6 @@ export function useUsuario() {
     handleChange,
     handleSave,
     handleSelecionarPessoaFisica,
+    handleSelecionarUnidade,
   };
 }

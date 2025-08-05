@@ -12,7 +12,7 @@ export interface Usuario {
   pessoaFisicaId?: string;
   pessoaFisicanome?: string;    // id da pessoa física vinculada
   unidadePadraoId: string;
-  unidadePadrao?: { codigo: string; nome: string };
+  unidadePadrao: string;
   unidades?: { id: string; nome: string }[];
   email: string;
   situacao: 'ativo' | 'inativo';

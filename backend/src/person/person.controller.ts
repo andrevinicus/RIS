@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Param, Body, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Param, Body, Query, ParseUUIDPipe, Delete } from '@nestjs/common';
 import { PersonService } from './person.service';
 import { Person } from './entities/person.entity';
 import { CreatePersonDto } from './dto/create-person.dto';
@@ -38,4 +38,9 @@ async create(@Body() data: CreatePersonDto): Promise<Person> {
   ): Promise<Person> {
     return this.personService.update(id, data);
   }
+
+  @Delete(':codigo')
+  async remove(@Param('codigo', ParseUUIDPipe) codigo: string): Promise<void> {
+    return this.personService.remove(codigo);
+}
 }

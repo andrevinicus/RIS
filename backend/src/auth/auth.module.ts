@@ -1,17 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { User } from './entities/auth.entity';
-import { Person } from 'src/person/entities/person.entity';
-// ajuste o caminho conforme sua estrutura
+import { Usuario } from '../usuarios/entities/usuario.entity'; // ajuste o caminho conforme seu projeto
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Person]), // importa as entidades para os repositórios
+    TypeOrmModule.forFeature([Usuario]), // isso registra o repositório UsuarioRepository para injeção
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'mySecretKey',
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
-  exports: [AuthService],
 })
 export class AuthModule {}

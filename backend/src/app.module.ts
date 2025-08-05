@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { PatientsModule } from './patients/patients.module';
 import { StandardsModule } from './standard/standard.module';
 import { ExamsModule } from './exams/exams.module';
 import { AuthModule } from './auth/auth.module';
 import { PersonModule } from './person/person.module';
 import { PessoaJuridicaModule } from './pessoa-juridica/pessoa-juridica.module';
 import { UnidadeModule } from './unidade/unidade.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
 
 
 @Module({
@@ -24,14 +24,13 @@ import { UnidadeModule } from './unidade/unidade.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-
-    PatientsModule,
     StandardsModule,
     ExamsModule,
     AuthModule,
     PersonModule,
     PessoaJuridicaModule,
-    UnidadeModule, // <-- adiciona aqui
+    UnidadeModule,
+    UsuariosModule, // <-- adiciona aqui
   ],
 })
 export class AppModule {}

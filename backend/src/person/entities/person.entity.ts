@@ -1,5 +1,6 @@
 import { User } from 'src/auth/entities/auth.entity';
 import { Unidade } from 'src/unidade/entities/unidade.entity';
+import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, Generated, ManyToOne } from 'typeorm';
 
 @Entity('persons')
@@ -89,9 +90,9 @@ export class Person {
   @Column({ nullable: true, type: 'text' })
   observations: string;
 
-  @OneToOne(() => User, (user) => user.person)
+  @OneToOne(() => Usuario, usuario => usuario.codigo)
   @JoinColumn()
-  user: User;
+  user: Usuario;
 
   @Column({ nullable: true })
   codigoUnidade: string; 

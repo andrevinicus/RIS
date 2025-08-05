@@ -28,10 +28,12 @@ export class UnidadeController {
     @Query('nome') nome?: string,
     @Query('cnpj') cnpj?: string,
     @Query('municipio') municipio?: string,
+    @Query('codUnidade') codUnidade?: string,
   ): Promise<Unidade[]> {
-    const filtros = { nome, cnpj, municipio };
+    const filtros = { nome, cnpj, municipio, codUnidade };
     return this.unidadeService.findAll(filtros);
   }
+
 
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Unidade> {

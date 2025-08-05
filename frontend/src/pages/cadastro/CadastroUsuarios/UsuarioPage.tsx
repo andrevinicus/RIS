@@ -19,6 +19,7 @@ const UsuarioPage: React.FC = () => {
     handleChange,
     handleSave,
     handleSelecionarPessoaFisica,
+    handleSelecionarUnidade,
   } = useUsuario();
 
   return (
@@ -45,6 +46,7 @@ const UsuarioPage: React.FC = () => {
           handleAddClick={handleAddClick}
           handleSave={handleSave}
           onSelecionarPessoaFisica={handleSelecionarPessoaFisica}
+          onSelecionarUnidade={handleSelecionarUnidade}
         />
       )}
 

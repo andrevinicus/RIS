@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Unidade } from './types';
-import { fetchUnidades, saveUnidade } from '../ServiceUnidade';
+import { deleteUnidade, fetchUnidades, saveUnidade } from '../ServiceUnidade';
 
 const FORMULARIO_VAZIO: Unidade = {
   codUnidade: '',
@@ -41,6 +41,7 @@ export function useUnidade() {
   const [isEditable, setIsEditable] = useState(false);
   const [filtros, setFiltros] = useState<{ nome?: string; cnpj?: string; municipio?: string }>({});
 
+  // Carrega unidades conforme filtros
   const loadUnidades = useCallback(async () => {
     setLoading(true);
     try {
@@ -59,6 +60,7 @@ export function useUnidade() {
     return () => clearTimeout(timer);
   }, [loadUnidades]);
 
+  // Manipula alteração dos inputs do formulário
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setForm(prev => ({
@@ -67,6 +69,7 @@ export function useUnidade() {
     }));
   }, []);
 
+  // Função para preparar formulário para adicionar nova unidade
   const handleAddClick = useCallback(() => {
     setForm(FORMULARIO_VAZIO);
     setSelected(null);
@@ -74,6 +77,33 @@ export function useUnidade() {
     setError(null);
   }, []);
 
+  // Função para preparar formulário para editar unidade selecionada
+  const handleEditClick = useCallback((unidade: Unidade) => {
+    setSelected(unidade);
+    setForm(unidade);
+    setIsEditable(true);
+    setError(null);
+  }, []);
+ const handleDeleteClick = useCallback(async (codUnidade: string) => {
+  setLoading(true);
+  setError(null);
+  try {
+    await deleteUnidade(codUnidade);
+    setUnidades(prev => prev.filter(u => u.codUnidade !== codUnidade));
+    if (selected?.codUnidade === codUnidade) {
+      setSelected(null);
+      setForm(FORMULARIO_VAZIO);
+      setIsEditable(false);
+    }
+  } catch (e) {
+    console.error('Erro ao excluir unidade:', e);
+    setError('Falha ao excluir unidade.');
+  } finally {
+    setLoading(false);
+  }
+}, [selected]);
+
+  // Cancelar edição/adição, volta ao estado inicial do formulário ou selecionado
   const handleCancel = useCallback(() => {
     if (selected) setForm(selected);
     else setForm(FORMULARIO_VAZIO);
@@ -81,42 +111,42 @@ export function useUnidade() {
     setError(null);
   }, [selected]);
 
-const handleSave = useCallback(async () => {
-  setLoading(true);
-  setError(null);
+  // Salvar unidade (adicionar ou atualizar)
+  const handleSave = useCallback(async () => {
+    setLoading(true);
+    setError(null);
 
-  try {
-    const isUpdate = !!selected?.codUnidade;
-    const payload = isUpdate ? form : { ...form };
-    if (!isUpdate) delete (payload as any).codEmpresa;
+    try {
+      const isUpdate = !!selected?.codUnidade;
+      const payload = isUpdate ? form : { ...form };
+      if (!isUpdate) delete (payload as any).codEmpresa;
 
-    const saved = await saveUnidade(payload, isUpdate ? selected.codUnidade : undefined);
+      const saved = await saveUnidade(payload, isUpdate ? selected.codUnidade : undefined);
 
-    if (saved) {
-      setUnidades(prev => {
-        const idx = prev.findIndex(u => u.codUnidade === saved.codUnidade);
-        if (idx !== -1) {
-          const copy = [...prev];
-          copy[idx] = saved;
-          return copy;
-        }
-        return [...prev, saved];
-      });
+      if (saved) {
+        setUnidades(prev => {
+          const idx = prev.findIndex(u => u.codUnidade === saved.codUnidade);
+          if (idx !== -1) {
+            const copy = [...prev];
+            copy[idx] = saved;
+            return copy;
+          }
+          return [...prev, saved];
+        });
 
-      setForm(saved);
-      setSelected(saved);
-      setIsEditable(false);
-    } else {
-      setError('Erro ao salvar.');
+        setForm(saved);
+        setSelected(saved);
+        setIsEditable(false);
+      } else {
+        setError('Erro ao salvar.');
+      }
+    } catch (e) {
+      console.error('Erro ao salvar unidade:', e);
+      setError('Erro inesperado ao salvar.');
+    } finally {
+      setLoading(false);
     }
-  } catch (e) {
-    console.error('Erro ao salvar unidade:', e);
-    setError('Erro inesperado ao salvar.');
-  } finally {
-    setLoading(false);
-  }
-}, [form, selected]);
-
+  }, [form, selected]);
 
   return {
     unidades,
@@ -127,6 +157,8 @@ const handleSave = useCallback(async () => {
     isEditable,
     handleChange,
     handleAddClick,
+    handleEditClick,
+    handleDeleteClick,
     handleCancel,
     handleSave,
     setFiltros,

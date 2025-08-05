@@ -30,7 +30,7 @@ async create(data: CreatePersonDto): Promise<Person> {
     console.log(`findById: buscando pessoa com id=${id}`);
     const person = await this.personRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['usuarios'],
     });
 
     if (!person) {
@@ -73,5 +73,10 @@ async create(data: CreatePersonDto): Promise<Person> {
     const results = await query.getMany();
     return results;
   }
+  async remove(id: string): Promise<void> {
+  const person = await this.findById(id); // verifica se existe, lança NotFoundException se não achar
+  await this.personRepository.remove(person);
+}
+
 
 }

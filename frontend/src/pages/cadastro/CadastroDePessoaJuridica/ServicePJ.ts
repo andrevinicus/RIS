@@ -28,7 +28,9 @@ export async function fetchPessoaJuridicaById(id: string): Promise<PessoaJuridic
     throw error;
   }
 }
-
+export const deletePessoaJuridica = async (id: string): Promise<void> => {
+  await axios.delete(`/api/pessoa-juridica/${id}`);
+};
 // Criar ou atualizar pessoa jurídica
 export async function savePessoaJuridica(data: PessoaJuridica, id?: string): Promise<PessoaJuridica | null> {
   try {
@@ -43,4 +45,5 @@ export async function savePessoaJuridica(data: PessoaJuridica, id?: string): Pro
     console.error('Erro ao salvar pessoa jurídica:', error);
     return null;
   }
+
 }

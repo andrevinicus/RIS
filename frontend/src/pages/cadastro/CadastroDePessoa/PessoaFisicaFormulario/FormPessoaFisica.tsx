@@ -1,38 +1,18 @@
 import React from 'react';
-import styled from 'styled-components';
+
 import InputText from './InputField';
+import { PessoaFisica } from '../PessoaFisicaGrid/types';
+import { AddButton, CancelButton, 
+  ErrorMessage, FormularioContainer, 
+  HeaderContainer, SaveButton, Select, 
+  StyledGridContainer, Title } 
+  from './FormPessoaFisica.styles';
+
 // seu componente input aprimorado
 
-interface FormularioPessoaFisica {
-  id: string;
-  name: string;
-  idade?: string;
-  cpf: string;
-  birth_date: string;
-  sex: string;
-  email: string;
-  phone_mobile_number: string;
-  phone_work_number: string;
-  weight: string;
-  height: string;
-  marital_status: string;
-  mother_name: string;
-  father_name: string;
-  zip_code: string;
-  address: string;
-  complement: string;
-  district: string;
-  city: string;
-  state: string;
-  country: string;
-  insurance_id: string;
-  insurance_card_number: string;
-  nationality: string;
-  observations: string;
-}
 
 interface FormPessoaFisicaProps {
-  form: FormularioPessoaFisica;
+  form: PessoaFisica;
   idade: string;
   isEditable: boolean;
   loading: boolean;
@@ -45,91 +25,6 @@ interface FormPessoaFisicaProps {
   handleSave: () => void;
 }
 
-const FormularioContainer = styled.div`
-  width: 100%;
-  background: #fff;
-  padding: 16px;
-  box-sizing: border-box;
-  border-radius: 8px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
-`;
-
-const HeaderContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-`;
-
-const Title = styled.h2`
-  margin: 0;
-  font-weight: 600;
-`;
-
-const AddButton = styled.button`
-  padding: 8px 16px;
-  border-radius: 6px;
-  background-color: #007bff;
-  border: none;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
-
-const StyledGridContainer = styled.div<{ columns: string; gap?: string; marginTop?: string }>`
-  display: grid;
-  grid-template-columns: ${({ columns }) => columns};
-  gap: ${({ gap }) => gap || '16px'};
-  margin-top: ${({ marginTop }) => marginTop || '16px'};
-`;
-
-const CancelButton = styled.button`
-  padding: 8px 16px;
-  border-radius: 6px;
-  background-color: #dc3545;
-  border: none;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #b02a37;
-  }
-`;
-
-const SaveButton = styled.button`
-  padding: 8px 16px;
-  border-radius: 6px;
-  background-color: #28a745;
-  border: none;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #1e7e34;
-  }
-`;
-
-const ErrorMessage = styled.div`
-  color: red;
-  margin-top: 16px;
-`;
-
-const Select = styled.select<{ disabled?: boolean }>`
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(0,0,0,0.2);
-  background-color: ${({ disabled }) => (disabled ? '#f9f9f9' : '#fff')};
-  box-sizing: border-box;
-  font-size: 14px;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'auto')};
-`;
 
 const GridContainer: React.FC<{
   columns: string;
