@@ -29,7 +29,9 @@ const UnidadeGrid: React.FC<UnidadeGridProps> = ({
 }) => {
   const [filtroAberto, setFiltroAberto] = useState(false);
   const [filtros, setFiltros] = useState({ nome: '', cnpj: '', codUnidade: '' });
-  const [unidadeSelecionada, setUnidadeSelecionada] = useState<Unidade | null>(null);
+
+  // Controla os códigos das unidades selecionadas (checkbox múltiplo)
+  const [selecionados, setSelecionados] = useState<string[]>([]);
 
   const toggleFiltro = () => setFiltroAberto(prev => !prev);
 
@@ -42,11 +44,31 @@ const UnidadeGrid: React.FC<UnidadeGridProps> = ({
     onFilterChange(filtros);
   };
 
-  const handleSelecionar = (unidade: Unidade) => {
-    setUnidadeSelecionada(prev =>
-      prev?.codUnidade === unidade.codUnidade ? null : unidade
+  // Clique no checkbox: adiciona/remove da seleção múltipla
+  const handleCheckboxClick = (codUnidade: string) => {
+    setSelecionados(prev =>
+      prev.includes(codUnidade)
+        ? prev.filter(id => id !== codUnidade)
+        : [...prev, codUnidade]
     );
   };
+
+  // Clique na linha (fora checkbox): seleciona somente esta unidade, limpando outras seleções
+  const handleRowClick = (codUnidade: string) => {
+    if (selecionados.length === 1 && selecionados[0] === codUnidade) {
+      setSelecionados([]); // desmarca se já estiver selecionado
+    } else {
+      setSelecionados([codUnidade]);
+    }
+  };
+
+  // Usado para habilitar/desabilitar botões: somente se houver um único selecionado
+  const selecionadoUnico = selecionados.length === 1 ? selecionados[0] : null;
+
+  // Função para encontrar a unidade selecionada pelo código (para editar/excluir)
+  const unidadeSelecionada = unidades.find(u => u.codUnidade === selecionadoUnico) ?? null;
+
+  const isSelecionado = (codUnidade: string) => selecionados.includes(codUnidade);
 
   return (
     <Container>
@@ -73,9 +95,7 @@ const UnidadeGrid: React.FC<UnidadeGridProps> = ({
               color: unidadeSelecionada ? 'blue' : 'gray',
               cursor: unidadeSelecionada ? 'pointer' : 'not-allowed',
             }}
-            onClick={() =>
-              unidadeSelecionada && onDeleteClick(unidadeSelecionada.codUnidade)
-            }
+            onClick={() => unidadeSelecionada && onDeleteClick(unidadeSelecionada.codUnidade)}
           >
             Excluir
           </span>
@@ -145,12 +165,35 @@ const UnidadeGrid: React.FC<UnidadeGridProps> = ({
             </tr>
           ) : (
             unidades.map(u => (
-              <tr key={u.codUnidade}>
-                <Td>
+              <tr
+                key={u.codUnidade}
+                onClick={() => handleRowClick(u.codUnidade)}
+                style={{
+                  backgroundColor: isSelecionado(u.codUnidade)
+                    ? 'rgba(0, 123, 255, 0.15)'
+                    : 'transparent',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={e => {
+                  if (!isSelecionado(u.codUnidade)) {
+                    (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(0, 123, 255, 0.05)';
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!isSelecionado(u.codUnidade)) {
+                    (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                <Td
+                  onClick={e => {
+                    e.stopPropagation(); // evitar disparar clique na linha ao clicar no checkbox
+                  }}
+                >
                   <input
                     type="checkbox"
-                    checked={unidadeSelecionada?.codUnidade === u.codUnidade}
-                    onChange={() => handleSelecionar(u)}
+                    checked={isSelecionado(u.codUnidade)}
+                    onChange={() => handleCheckboxClick(u.codUnidade)}
                   />
                 </Td>
                 <Td>{u.codUnidade}</Td>

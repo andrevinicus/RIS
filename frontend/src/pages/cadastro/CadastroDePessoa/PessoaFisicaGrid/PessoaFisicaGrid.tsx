@@ -30,22 +30,42 @@ const PessoaFisicaGrid: React.FC<PessoaFisicaGridProps> = ({
 }) => {
   const [filtroAberto, setFiltroAberto] = useState(false);
   const [filtros, setFiltros] = useState({ nome: '', cpf: '', codigo: '' });
-  const [pessoaSelecionada, setPessoaSelecionada] = useState<PessoaFisica | null>(null);
 
-  const toggleFiltro = () => setFiltroAberto(prev => !prev);
+  // Controle de seleção (array de ids para múltipla seleção)
+  const [selecionados, setSelecionados] = useState<string[]>([]);
+
+  const toggleFiltro = () => setFiltroAberto((prev) => !prev);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFiltros(prev => ({ ...prev, [name]: value }));
+    setFiltros((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePesquisar = () => {
     onFilterChange(filtros);
   };
 
-  const handleSelecionar = (pessoa: PessoaFisica) => {
-    setPessoaSelecionada(prev => (prev?.id === pessoa.id ? null : pessoa));
+  // Clique no checkbox: adiciona/remove da seleção múltipla
+  const handleCheckboxClick = (id: string) => {
+    setSelecionados((prev) =>
+      prev.includes(id) ? prev.filter((selId) => selId !== id) : [...prev, id]
+    );
   };
+
+  // Clique na linha (fora checkbox): seleciona só essa linha (substitui múltiplos)
+  const handleRowClick = (id: string) => {
+    if (selecionados.length === 1 && selecionados[0] === id) {
+      setSelecionados([]);
+    } else {
+      setSelecionados([id]);
+    }
+  };
+
+  // Verifica se id está selecionado (para estilizar linha e checkbox)
+  const isSelecionado = (id: string) => selecionados.includes(id);
+
+  // Para habilitar/desabilitar botões, apenas seleção única é permitida
+  const selecionadoUnico = selecionados.length === 1 ? selecionados[0] : null;
 
   return (
     <Container>
@@ -60,19 +80,24 @@ const PessoaFisicaGrid: React.FC<PessoaFisicaGridProps> = ({
           </span>
           <span
             style={{
-              color: pessoaSelecionada ? 'blue' : 'gray',
-              cursor: pessoaSelecionada ? 'pointer' : 'not-allowed',
+              color: selecionadoUnico ? 'blue' : 'gray',
+              cursor: selecionadoUnico ? 'pointer' : 'not-allowed',
             }}
-            onClick={() => pessoaSelecionada && onEditClick(pessoaSelecionada)}
+            onClick={() => {
+              if (selecionadoUnico) {
+                const pessoa = pessoas.find((p) => p.id === selecionadoUnico);
+                if (pessoa) onEditClick(pessoa);
+              }
+            }}
           >
             Editar
           </span>
           <span
             style={{
-              color: pessoaSelecionada ? 'blue' : 'gray',
-              cursor: pessoaSelecionada ? 'pointer' : 'not-allowed',
+              color: selecionadoUnico ? 'blue' : 'gray',
+              cursor: selecionadoUnico ? 'pointer' : 'not-allowed',
             }}
-            onClick={() => pessoaSelecionada && onDeleteClick(pessoaSelecionada.id)}
+            onClick={() => selecionadoUnico && onDeleteClick(selecionadoUnico)}
           >
             Excluir
           </span>
@@ -138,13 +163,38 @@ const PessoaFisicaGrid: React.FC<PessoaFisicaGridProps> = ({
               </Td>
             </tr>
           ) : (
-            pessoas.map(pessoa => (
-              <tr key={pessoa.id}>
-                <Td>
+            pessoas.map((pessoa) => (
+              <tr
+                key={pessoa.id}
+                onClick={() => handleRowClick(pessoa.id)}
+                onDoubleClick={() => onEditClick(pessoa)}
+                style={{
+                  backgroundColor: isSelecionado(pessoa.id)
+                    ? 'rgba(0, 123, 255, 0.15)'
+                    : 'transparent',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelecionado(pessoa.id)) {
+                    (e.currentTarget as HTMLElement).style.backgroundColor =
+                      'rgba(0, 123, 255, 0.05)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelecionado(pessoa.id)) {
+                    (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                <Td
+                  onClick={(e) => {
+                    e.stopPropagation(); // previne clique na linha ao clicar no checkbox
+                  }}
+                >
                   <input
                     type="checkbox"
-                    checked={pessoaSelecionada?.id === pessoa.id}
-                    onChange={() => handleSelecionar(pessoa)}
+                    checked={isSelecionado(pessoa.id)}
+                    onChange={() => handleCheckboxClick(pessoa.id)}
                   />
                 </Td>
                 <Td>{pessoa.codigo}</Td>

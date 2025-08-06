@@ -10,16 +10,17 @@ export const fetchUnidades = async (filtros: {
   cnpj?: string;
   codUnidade?: string;
   municipio?: string;
-}): Promise<Unidade[]> => {
+} = {}): Promise<Unidade[]> => {
   const params = new URLSearchParams();
   if (filtros.nome) params.append('nome', filtros.nome);
   if (filtros.cnpj) params.append('cnpj', filtros.cnpj);
-  if (filtros.codUnidade) params.append('codUnidade', filtros.codUnidade); // ERRADO, deve ser 'codUnidade'
+  if (filtros.codUnidade) params.append('codUnidade', filtros.codUnidade);
   if (filtros.municipio) params.append('municipio', filtros.municipio);
 
   const response = await axios.get(`${API_BASE_URL}/unidades`, { params });
   return response.data;
 };
+
 
 // Buscar unidade por código
 export const fetchUnidadeByCodigo = async (codigo: string): Promise<Unidade> => {

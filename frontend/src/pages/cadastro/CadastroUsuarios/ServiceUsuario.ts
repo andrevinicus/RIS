@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { Usuario } from './types';
+import { Unidade } from '../CadastroUnidades/HookTypes/types'; // ajuste o caminho conforme seu projeto
 
 const API_URL = 'http://localhost:3000'; // ajuste se necessário
 const LINK = '/usuarios';
+
 // Buscar todos os usuários
 export async function fetchUsuarios(): Promise<Usuario[]> {
   const response = await axios.get(`${API_URL}${LINK}`);
@@ -11,7 +13,7 @@ export async function fetchUsuarios(): Promise<Usuario[]> {
 
 // Buscar usuário por ID
 export async function fetchUsuarioById(id: string): Promise<Usuario> {
-  const response = await axios.get(`${API_URL}${LINK}${id}`);
+  const response = await axios.get(`${API_URL}${LINK}/${id}`);
   return response.data;
 }
 
@@ -29,4 +31,13 @@ export async function saveUsuario(data: any, id?: string): Promise<Usuario> {
 // Deletar usuário
 export async function deleteUsuario(id: string): Promise<void> {
   await axios.delete(`${API_URL}${LINK}/${id}`);
+}
+
+// Buscar unidades vinculadas a um usuário pelo ID
+export async function fetchUnidadesVinculadas(usuarioId: string): Promise<Unidade[]> {
+  const response = await axios.get(`${API_URL}${LINK}/${usuarioId}/unidades`);
+  return response.data;
+}
+export async function salvarUnidadesVinculadas(usuarioCodigo: string, unidades: string[]): Promise<void> {
+  await axios.post(`/api/usuarios/${usuarioCodigo}/vincular-unidades`, { unidades });
 }

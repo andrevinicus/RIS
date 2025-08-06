@@ -34,7 +34,7 @@ const PessoaJuridicaGrid: React.FC<PessoaJuridicaGridProps> = ({
 }) => {
   const [filtroAberto, setFiltroAberto] = useState(false);
   const [filtros, setFiltros] = useState({ codigo: '', cnpj: '', nome: '' });
-  const [empresaSelecionada, setEmpresaSelecionada] = useState<PessoaJuridica | null>(null);
+  const [selecionados, setSelecionados] = useState<string[]>([]);
 
   const toggleFiltro = () => setFiltroAberto(prev => !prev);
 
@@ -47,11 +47,26 @@ const PessoaJuridicaGrid: React.FC<PessoaJuridicaGridProps> = ({
     onFilterChange(filtros);
   };
 
-  const handleSelecionar = (empresa: PessoaJuridica) => {
-    setEmpresaSelecionada(prev =>
-      prev?.id === empresa.id ? null : empresa
+  // Clique no checkbox: seleção múltipla
+  const handleCheckboxClick = (id: string) => {
+    setSelecionados(prev =>
+      prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
     );
   };
+
+  // Clique na linha: seleciona apenas 1, limpa os outros
+  const handleRowClick = (id: string) => {
+    if (selecionados.length === 1 && selecionados[0] === id) {
+      setSelecionados([]); // desmarca se já estava selecionado
+    } else {
+      setSelecionados([id]);
+    }
+  };
+
+  const selecionadoUnico = selecionados.length === 1 ? selecionados[0] : null;
+  const empresaSelecionada = empresas.find(e => e.id === selecionadoUnico) ?? null;
+
+  const isSelecionado = (id: string) => selecionados.includes(id);
 
   return (
     <Container>
@@ -145,12 +160,31 @@ const PessoaJuridicaGrid: React.FC<PessoaJuridicaGridProps> = ({
             </tr>
           ) : (
             empresas.map(emp => (
-              <tr key={emp.id}>
-                <Td>
+              <tr
+                key={emp.id}
+                onClick={() => handleRowClick(emp.id)}
+                style={{
+                  backgroundColor: isSelecionado(emp.id) ? 'rgba(0, 123, 255, 0.15)' : 'transparent',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={e => {
+                  if (!isSelecionado(emp.id)) {
+                    (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(0, 123, 255, 0.05)';
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!isSelecionado(emp.id)) {
+                    (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                <Td
+                  onClick={e => e.stopPropagation()} // evita que clique no checkbox dispare o clique da linha
+                >
                   <input
                     type="checkbox"
-                    checked={empresaSelecionada?.id === emp.id}
-                    onChange={() => handleSelecionar(emp)}
+                    checked={isSelecionado(emp.id)}
+                    onChange={() => handleCheckboxClick(emp.id)}
                   />
                 </Td>
                 <Td>{emp.codigo}</Td>

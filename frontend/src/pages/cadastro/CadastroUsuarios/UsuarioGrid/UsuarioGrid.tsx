@@ -12,14 +12,14 @@ import {
   InputFilter,
 } from './UsuarioGridStyles';
 import { Usuario } from '../types';
+import UsuarioVinculosPage from './UsuarioVinculosPage';
+
+// Importe sua tela de vínculos
 
 interface UsuarioGridProps {
   usuarios: Usuario[];
   onAddClick: () => void;
-  onFilterChange: (filtros: {
-    nome?: string;
-    email?: string;
-  }) => void;
+  onFilterChange: (filtros: { nome?: string; email?: string }) => void;
   onEditClick: (usuario: Usuario) => void;
   onDeleteClick: (id: string) => void | Promise<void>;
 }
@@ -32,29 +32,53 @@ const UsuarioGrid: React.FC<UsuarioGridProps> = ({
   onDeleteClick,
 }) => {
   const [filtroAberto, setFiltroAberto] = useState(false);
-  const [filtros, setFiltros] = useState({
-    nome: '',
-    email: '',
-  });
-  const [usuarioSelecionado, setUsuarioSelecionado] = useState<Usuario | null>(null);
+  const [filtros, setFiltros] = useState({ nome: '', email: '' });
 
-  const toggleFiltro = () => setFiltroAberto(prev => !prev);
+  const [selecionados, setSelecionados] = useState<string[]>([]);
+
+  // Estado para controlar qual usuário está aberto na tela de vínculos
+  const [usuarioVinculos, setUsuarioVinculos] = useState<Usuario | null>(null);
+
+  const toggleFiltro = () => setFiltroAberto((prev) => !prev);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFiltros(prev => ({ ...prev, [name]: value }));
+    setFiltros((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePesquisar = () => {
     onFilterChange(filtros);
   };
 
-  const handleSelecionar = (usuario: Usuario) => {
-    setUsuarioSelecionado(prev =>
-      prev?.codigo === usuario.codigo ? null : usuario
+  const handleCheckboxClick = (codigo: string) => {
+    setSelecionados((prev) =>
+      prev.includes(codigo) ? prev.filter((id) => id !== codigo) : [...prev, codigo]
     );
   };
 
+  const handleRowClick = (codigo: string) => {
+    if (selecionados.length === 1 && selecionados[0] === codigo) {
+      setSelecionados([]);
+    } else {
+      setSelecionados([codigo]);
+    }
+  };
+
+  const isSelecionado = (codigo: string) => selecionados.includes(codigo);
+
+  const selecionadoUnico = selecionados.length === 1 ? selecionados[0] : null;
+
+  // Se estiver na tela de vínculos, renderiza essa tela, com botão para voltar
+  if (usuarioVinculos) {
+    return (
+
+      <UsuarioVinculosPage
+        usuario={usuarioVinculos}
+        onVoltar={() => setUsuarioVinculos(null)}
+      />
+
+    );
+  }
   return (
     <Container>
       <TopBar>
@@ -63,29 +87,27 @@ const UsuarioGrid: React.FC<UsuarioGridProps> = ({
         </FilterButton>
 
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16 }}>
-          <span
-            style={{ color: 'blue', cursor: 'pointer' }}
-            onClick={onAddClick}
-          >
+          <span style={{ color: 'blue', cursor: 'pointer' }} onClick={onAddClick}>
             Adicionar
           </span>
           <span
             style={{
-              color: usuarioSelecionado ? 'blue' : 'gray',
-              cursor: usuarioSelecionado ? 'pointer' : 'not-allowed',
+              color: selecionadoUnico ? 'blue' : 'gray',
+              cursor: selecionadoUnico ? 'pointer' : 'not-allowed',
             }}
-            onClick={() => usuarioSelecionado && onEditClick(usuarioSelecionado)}
+            onClick={() =>
+              selecionadoUnico &&
+              onEditClick(usuarios.find((u) => u.codigo === selecionadoUnico)!)
+            }
           >
             Editar
           </span>
           <span
             style={{
-              color: usuarioSelecionado ? 'blue' : 'gray',
-              cursor: usuarioSelecionado ? 'pointer' : 'not-allowed',
+              color: selecionadoUnico ? 'blue' : 'gray',
+              cursor: selecionadoUnico ? 'pointer' : 'not-allowed',
             }}
-            onClick={() =>
-              usuarioSelecionado && onDeleteClick(usuarioSelecionado.codigo)
-            }
+            onClick={() => selecionadoUnico && onDeleteClick(selecionadoUnico)}
           >
             Excluir
           </span>
@@ -141,13 +163,38 @@ const UsuarioGrid: React.FC<UsuarioGridProps> = ({
               <Td colSpan={5}>Nenhum usuário encontrado.</Td>
             </tr>
           ) : (
-            usuarios.map(usuario => (
-              <tr key={usuario.codigo}>
-                <Td>
+            usuarios.map((usuario) => (
+              <tr
+                key={usuario.codigo}
+                onClick={() => handleRowClick(usuario.codigo)}
+                onDoubleClick={() => setUsuarioVinculos(usuario)} // abre tela de vínculos
+                style={{
+                  backgroundColor: isSelecionado(usuario.codigo)
+                    ? 'rgba(0, 123, 255, 0.15)'
+                    : 'transparent',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelecionado(usuario.codigo)) {
+                    (e.currentTarget as HTMLElement).style.backgroundColor =
+                      'rgba(0, 123, 255, 0.05)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelecionado(usuario.codigo)) {
+                    (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                <Td
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
                   <input
                     type="checkbox"
-                    checked={usuarioSelecionado?.codigo === usuario.codigo}
-                    onChange={() => handleSelecionar(usuario)}
+                    checked={selecionados.includes(usuario.codigo)}
+                    onChange={() => handleCheckboxClick(usuario.codigo)}
                   />
                 </Td>
                 <Td>{usuario.codigo}</Td>
