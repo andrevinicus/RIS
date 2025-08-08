@@ -11,8 +11,8 @@ import {
   ErrorMessage,
 } from './FromsUsuario.Style';
 import InputText from '../InputText';
-import { Unidade } from '../../CadastroUnidades/HookTypes/types';
-import { Usuario } from '../types';
+
+import { Unidade, Usuario } from '../../../../types/types';
 import ModalUnidade from '../../Modal/ModalUnidade';
 import ModalPessoaFisica from '../../Modal/ModalPessoaFisica';
 

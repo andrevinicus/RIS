@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Modal from 'react-modal';
 import { fetchPessoas } from '../CadastroDePessoa/ServicePF';
-import { PessoaFisica } from '../CadastroDePessoa/PessoaFisicaGrid/types';
+import { PessoaFisica } from '../../../types/types';
+
 
 Modal.setAppElement('#root');
 

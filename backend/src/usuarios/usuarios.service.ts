@@ -5,47 +5,54 @@ import * as bcrypt from 'bcrypt';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
+import { Unidade } from 'src/unidade/entities/unidade.entity';
 
 @Injectable()
 export class UsuariosService implements OnModuleInit {
   constructor(
     @InjectRepository(Usuario)
     private usuariosRepository: Repository<Usuario>,
-  ) {}
+  ) { }
 
   // Método que cria o admin padrão caso não exista
-private async createDefaultAdmin() {
-  // Verificar se já existe usuário admin OU código 0001 para evitar conflito de unicidade
-  const adminUser = await this.usuariosRepository.findOne({
-    where: [
-      { usuario: 'admin' },
-      { codigo: '0000' },
-    ],
-  });
+  private async createDefaultAdmin() {
+    // Verificar se já existe usuário admin OU código 0001 para evitar conflito de unicidade
+    const adminUser = await this.usuariosRepository.findOne({
+      where: [
+        { usuario: 'admin' },
+        { codigo: '0000' },
+      ],
+    });
 
-  if (adminUser) {
-    console.log('Usuário admin ou código 0001 já existe');
-    return;
+    if (adminUser) {
+      console.log('Usuário admin ou código 0001 já existe');
+      return;
+    }
+
+    const hashSenha = await bcrypt.hash('admin123', 10);
+
+    const novoAdmin = this.usuariosRepository.create({
+      usuario: 'admin',
+      senha: hashSenha,
+      nomeCompleto: 'Administrador',
+      codigo: '0000',
+      dataCriacao: new Date(),
+      email: 'admin@example.com',
+      situacao: 'ativo',
+      unidadePadraoId: '0001',
+      unidadePadrao: 'Unidade Padrão',
+    });
+
+    await this.usuariosRepository.save(novoAdmin);
+    console.log('Usuário admin criado com sucesso');
   }
-
-  const hashSenha = await bcrypt.hash('admin123', 10);
-
-  const novoAdmin = this.usuariosRepository.create({
-    usuario: 'admin',
-    senha: hashSenha,
-    nomeCompleto: 'Administrador',
-    codigo: '0000',
-    dataCriacao: new Date(),
-    email: 'admin@example.com',
-    situacao: 'ativo',
-    unidadePadraoId: '0001',
-    unidadePadrao: 'Unidade Padrão',
-  });
-
-  await this.usuariosRepository.save(novoAdmin);
-  console.log('Usuário admin criado com sucesso');
-}
-
+  async findById(id: string): Promise<Usuario> {
+    const usuario = await this.usuariosRepository.findOneBy({ id });
+    if (!usuario) {
+      throw new NotFoundException(`Usuário com id ${id} não encontrado`);
+    }
+    return usuario;
+  } 
 
   async onModuleInit() {
     await this.createDefaultAdmin();
@@ -92,8 +99,34 @@ private async createDefaultAdmin() {
     return this.usuariosRepository.save(usuario);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     const usuario = await this.findOne(id);
     await this.usuariosRepository.remove(usuario);
+    return { message: `Usuário com id ${id} removido com sucesso.` };
   }
+  async vincularUnidades(codigo: string, unidades: { id: string; nome: string }[]): Promise<Usuario> {
+    const usuario = await this.usuariosRepository.findOneBy({ codigo });
+    if (!usuario) {
+      throw new NotFoundException(`Usuário com código ${codigo} não encontrado`);
+    }
+
+    usuario.unidades = unidades; // atribui o array ao campo JSON
+
+    return this.usuariosRepository.save(usuario); // salva no banco
+  }
+  async getUnidadesVinculadas(codigo: string): Promise<{ id: string; nome: string }[]> {
+    const usuario = await this.usuariosRepository.findOne({
+      where: { codigo },
+    });
+
+    if (!usuario) {
+      throw new NotFoundException(`Usuário ${codigo} não encontrado`);
+    }
+
+    // Se o campo unidades for undefined, retorna array vazio
+    return usuario.unidades ?? [];
+  }
+
+
+
 }

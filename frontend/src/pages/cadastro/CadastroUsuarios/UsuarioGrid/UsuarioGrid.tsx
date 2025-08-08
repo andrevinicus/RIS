@@ -5,14 +5,14 @@ import {
   Container,
   TopBar,
   FilterButton,
-  Table,
-  Th,
-  Td,
   FilterContainer,
   InputFilter,
-} from './UsuarioGridStyles';
-import { Usuario } from '../types';
-import UsuarioVinculosPage from './UsuarioVinculosPage';
+  Table,
+  Td,
+  Th,
+} from '../../../../components/StyleCadastro/StyleComponents';
+import { Usuario } from '../../../../types/types';
+import UsuarioVinculosPage from '../ConfigUser/UsuarioVinculosPage';
 
 // Importe sua tela de vínculos
 
@@ -187,8 +187,11 @@ const UsuarioGrid: React.FC<UsuarioGridProps> = ({
                 }}
               >
                 <Td
-                  onClick={(e) => {
-                    e.stopPropagation();
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    textAlign: 'center',
+                    verticalAlign: 'middle',
+                    width: '40px', // define uma largura fixa para garantir alinhamento com o header
                   }}
                 >
                   <input

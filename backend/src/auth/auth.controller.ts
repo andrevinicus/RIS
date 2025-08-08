@@ -1,24 +1,50 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UnauthorizedException,
+  Get,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
+
+import { UsuariosService } from '../usuarios/usuarios.service';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { Public } from './public.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usuariosService: UsuariosService
+  ) {}
 
-  @Post('login')
-  async login(
-    @Body() body: { username: string; password: string }
-  ): Promise<{ access_token: string; userId: string }> {
-    const user = await this.authService.validateUser(body.username, body.password);
-    if (!user) {
-      throw new UnauthorizedException('Usuário ou senha inválidos');
-    }
+@Public()
+@Post('login')
+async login(
+  @Body() body: { username: string; password: string }
+): Promise<{ access_token: string; userId: string }> {
+  const user = await this.authService.validateUser(body.username, body.password);
+  if (!user) {
+    throw new UnauthorizedException('Usuário ou senha inválidos');
+  }
+  // Você monta o payload, mas na verdade não usa diretamente aqui (pois o login do AuthService já gera o token)
+  const token = await this.authService.login(user);
 
-    const token = await this.authService.login(user);
+  return {
+    access_token: token.access_token,
+    userId: user.id,
+  };
+}
 
-    return {
-      access_token: token.access_token,
-      userId: user.id,
-    };
+  
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  getMe(@Request() req) {
+    console.log('req.user:', req.user); // o payload do token deve estar aqui
+    return req.user;
   }
 }
+
+

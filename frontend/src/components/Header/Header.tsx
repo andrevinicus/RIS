@@ -1,4 +1,6 @@
 import React from 'react';
+import { User } from 'lucide-react'; 
+// ou qualquer outro pacote de ícones que esteja usando
 
 interface HeaderProps {
   userInfo: {
@@ -8,7 +10,7 @@ interface HeaderProps {
   toggleSidebar: () => void;
   collapsed: boolean;
   toggleCollapse: () => void;
-  style?: React.CSSProperties;  // ADICIONE ESSA LINHA
+  style?: React.CSSProperties;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -31,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({
       fontWeight: '600',
       fontSize: 18,
       color: '#374151',
-      ...style, // aplica estilo fixo com position/left
+      ...style,
     }}
   >
     {/* ☰ botão para expandir/retrair no desktop ou abrir no mobile */}
@@ -49,11 +51,14 @@ const Header: React.FC<HeaderProps> = ({
       ☰
     </button>
 
-    <span>Olá, {userInfo?.realname || 'Usuário'} 👋</span>
-    <span style={{ fontSize: 14, color: '#6b7280' }}>Sistema da Clínica</span>
+    {/* Ícone + Nome da Pessoa */}
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <User size={20} color="#6b7280" /> {/* Ícone de perfil */}
+      <span style={{ fontSize: 14, color: '#6b7280' }}>
+        {userInfo?.realname || 'Usuário'}
+      </span>
+    </div>
   </header>
 );
 
-
 export default Header;
-

@@ -1,8 +1,5 @@
-// ServiceUnidade.ts
-import axios from 'axios';
-import { Unidade } from './HookTypes/types';
-
-const API_BASE_URL = 'http://localhost:3000';
+import { Unidade } from '../../../types/types';
+import api from '../../../components/axiosInstance';
 
 // Buscar unidades com filtros
 export const fetchUnidades = async (filtros: {
@@ -17,33 +14,33 @@ export const fetchUnidades = async (filtros: {
   if (filtros.codUnidade) params.append('codUnidade', filtros.codUnidade);
   if (filtros.municipio) params.append('municipio', filtros.municipio);
 
-  const response = await axios.get(`${API_BASE_URL}/unidades`, { params });
+  const response = await api.get('/unidades', { params });
   return response.data;
 };
-
 
 // Buscar unidade por código
 export const fetchUnidadeByCodigo = async (codigo: string): Promise<Unidade> => {
   if (!codigo) throw new Error('Código inválido');
-  const response = await axios.get(`${API_BASE_URL}/unidades/codigo/${codigo}`);
+  const response = await api.get(`/unidades/codigo/${codigo}`);
   return response.data;
 };
-export async function deleteUnidade(codUnidade: string): Promise<void> {
-  await axios.delete(`/api/unidades/${codUnidade}`);
-}
-// Criar ou atualizar unidade usando `codigo`
-// ServiceUnidade.ts
 
+// Deletar unidade
+export async function deleteUnidade(codUnidade: string): Promise<void> {
+  await api.delete(`/unidades/${codUnidade}`);
+}
+
+// Criar ou atualizar unidade
 export const saveUnidade = async (
   unidade: Unidade,
   codUnidade?: string
 ): Promise<Unidade> => {
   const payload = codUnidade ? unidade : { ...unidade };
-  if (!codUnidade) delete (payload as any).codUnidade; // remove o codEmpresa se for criação
+  if (!codUnidade) delete (payload as any).codUnidade;
 
   const response = codUnidade
-    ? await axios.put(`${API_BASE_URL}/unidades/${codUnidade}`, payload)
-    : await axios.post(`${API_BASE_URL}/unidades`, payload);
+    ? await api.put(`/unidades/${codUnidade}`, payload)
+    : await api.post('/unidades', payload);
 
   return response.data;
 };

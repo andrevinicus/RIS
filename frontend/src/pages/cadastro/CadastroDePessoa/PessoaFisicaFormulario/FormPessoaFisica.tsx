@@ -1,12 +1,13 @@
 import React from 'react';
 
 import InputText from './InputField';
-import { PessoaFisica } from '../PessoaFisicaGrid/types';
+
 import { AddButton, CancelButton, 
   ErrorMessage, FormularioContainer, 
   HeaderContainer, SaveButton, Select, 
   StyledGridContainer, Title } 
   from './FormPessoaFisica.styles';
+import { PessoaFisica } from '../../../../types/types';
 
 // seu componente input aprimorado
 

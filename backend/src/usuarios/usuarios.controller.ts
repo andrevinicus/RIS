@@ -16,6 +16,19 @@ export class UsuariosController {
   findAll() {
     return this.usuariosService.findAll();
   }
+  @Get(':codigo/unidades')
+  async getUnidadesVinculadas(@Param('codigo') codigo: string) {
+    return this.usuariosService.getUnidadesVinculadas(codigo);
+  }
+
+  // Coloque esta rota antes das rotas com ':id' simples
+  @Post(':codigo/vincular-unidades')
+  async vincularUnidades(
+    @Param('codigo') codigo: string,
+    @Body('unidades') unidades: { id: string; nome: string }[],
+  ) {
+    return this.usuariosService.vincularUnidades(codigo, unidades);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -27,8 +40,9 @@ export class UsuariosController {
     return this.usuariosService.update(id, updateUsuarioDto);
   }
 
-  @Delete(':codigo')
-  remove(@Param('codigo') codigo: string) {
-    return this.usuariosService.remove(codigo);
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usuariosService.remove(id);
   }
 }
+

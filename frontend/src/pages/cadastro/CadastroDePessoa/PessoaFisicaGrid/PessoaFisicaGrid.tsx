@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaFilter } from 'react-icons/fa';
-import { PessoaFisica } from './types';
+
 
 import {
   Container,
@@ -11,7 +11,8 @@ import {
   Table,
   Td,
   Th,
-} from '../../CadastroDePessoaJuridica/PessoaJuridicaGrid/stylesComponent';
+} from '../../../../components/StyleCadastro/StyleComponents';
+import { PessoaFisica } from '../../../../types/types';
 
 interface PessoaFisicaGridProps {
   pessoas: PessoaFisica[];

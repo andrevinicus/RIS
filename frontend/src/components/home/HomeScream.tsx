@@ -101,8 +101,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ userInfo, onLogout }) => {
         <Header
           userInfo={userInfo}
           isMobile={isMobile}
-          // Quando o botão no Header é clicado para fechar/abrir a sidebar
-          // Ele alternará a visibilidade e o colapso
           toggleSidebar={() => {
             if (isMobile) {
               setSidebarVisible(!sidebarVisible);

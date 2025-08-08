@@ -1,43 +1,56 @@
-import axios from 'axios';
-import { Usuario } from './types';
-import { Unidade } from '../CadastroUnidades/HookTypes/types'; // ajuste o caminho conforme seu projeto
 
-const API_URL = 'http://localhost:3000'; // ajuste se necessário
+import api from '../../../components/axiosInstance';
+import { Unidade, UnidadeSimples, Usuario } from '../../../types/types';
+// ajuste o caminho conforme seu projeto
+
+ // ajuste se necessário
 const LINK = '/usuarios';
 
 // Buscar todos os usuários
 export async function fetchUsuarios(): Promise<Usuario[]> {
-  const response = await axios.get(`${API_URL}${LINK}`);
+  const response = await api.get(`${LINK}`);
   return response.data;
 }
 
 // Buscar usuário por ID
 export async function fetchUsuarioById(id: string): Promise<Usuario> {
-  const response = await axios.get(`${API_URL}${LINK}/${id}`);
+  const response = await api.get(`${LINK}/${id}`);
   return response.data;
 }
 
 // Criar ou atualizar usuário
 export async function saveUsuario(data: any, id?: string): Promise<Usuario> {
   if (id) {
-    const response = await axios.put(`${API_URL}${LINK}/${id}`, data);
+    const response = await api.put(`${LINK}/${id}`, data);
     return response.data;
   } else {
-    const response = await axios.post(`${API_URL}${LINK}`, data);
+    const response = await api.post(`${LINK}`, data);
     return response.data;
   }
 }
 
 // Deletar usuário
 export async function deleteUsuario(id: string): Promise<void> {
-  await axios.delete(`${API_URL}${LINK}/${id}`);
+  await api.delete(`${LINK}/${id}`);
 }
 
 // Buscar unidades vinculadas a um usuário pelo ID
-export async function fetchUnidadesVinculadas(usuarioId: string): Promise<Unidade[]> {
-  const response = await axios.get(`${API_URL}${LINK}/${usuarioId}/unidades`);
-  return response.data;
+export async function fetchUnidadesVinculadas(codigo: string): Promise<Unidade[]> {
+  try {
+    const response = await api.get<Unidade[]>(`${LINK}/${codigo}/unidades`);
+    return response.data;
+  } catch (error) {
+    console.error(`Erro ao buscar unidades vinculadas do usuário ${codigo}:`, error);
+    // Retorna array vazio em caso de erro para não quebrar a aplicação
+    return [];
+  }
 }
-export async function salvarUnidadesVinculadas(usuarioCodigo: string, unidades: string[]): Promise<void> {
-  await axios.post(`/api/usuarios/${usuarioCodigo}/vincular-unidades`, { unidades });
+// Salvar unidades vinculadas a um usuário
+
+
+export async function salvarUnidadesVinculadas(
+  codigo: string,
+  unidades: UnidadeSimples[],
+): Promise<void> {
+  await api.post(`${LINK}/${codigo}/vincular-unidades`, { unidades });
 }

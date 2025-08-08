@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FaFilter } from 'react-icons/fa';
 import { PessoaJuridica } from '../PessoaJuridicaForms/types';
-
 import {
   Container,
   TopBar,
@@ -11,7 +10,7 @@ import {
   Table,
   Td,
   Th,
-} from './stylesComponent';
+} from '../../../../components/StyleCadastro/StyleComponents';
 
 interface PessoaJuridicaGridProps {
   empresas: PessoaJuridica[];

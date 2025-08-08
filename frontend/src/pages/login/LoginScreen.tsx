@@ -8,32 +8,41 @@ const FaSignInAlt = FaIcons.FaSignInAlt as React.FC<IconProps>;
 
 interface LoginScreenProps {
   onLogin: (username: string, password: string) => Promise<void>;
+  loading?: boolean;
+  errorMessage?: string | null;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
+const LoginScreen: React.FC<LoginScreenProps> = ({
+  onLogin,
+  loading = false,
+  errorMessage = null,
+}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [localMessage, setLocalMessage] = useState('');
 
+  // Mensagem para exibir (validação local ou erro do backend)
+  const displayMessage = localMessage || errorMessage || '';
+
+  // Handle submit login
   const submit = async () => {
-    if (!username || !password) {
-      setMessage('Por favor, preencha usuário e senha.');
+    if (!username.trim() || !password.trim()) {
+      setLocalMessage('Por favor, preencha usuário e senha.');
       return;
     }
-    setLoading(true);
-    setMessage('');
+    setLocalMessage('');
     try {
       await onLogin(username.trim(), password.trim());
-      setMessage('Login realizado com sucesso!');
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setMessage(error.message);
-      } else {
-        setMessage('Erro no login');
-      }
-    } finally {
-      setLoading(false);
+      // Não setar mensagem sucesso aqui, pois o fluxo geralmente navega para outra tela
+    } catch {
+      // Erro tratado no componente pai, só aqui pra evitar crash
+    }
+  };
+
+  // Permitir envio com Enter no campo senha
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !loading) {
+      submit();
     }
   };
 
@@ -50,9 +59,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
       }}
     >
       <div
+        role="form"
+        aria-labelledby="login-title"
         style={{
           background: 'white',
-          padding: 55,
+          padding: 48,
           borderRadius: 20,
           boxShadow: '0 15px 30px rgba(0, 0, 0, 0.1)',
           maxWidth: 400,
@@ -69,14 +80,16 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             display: 'flex',
             justifyContent: 'center',
           }}
+          aria-hidden="true"
         >
           <FaLock size={72} />
         </div>
 
         <h2
+          id="login-title"
           style={{
             color: '#3730a3',
-            marginBottom: 20,
+            marginBottom: 24,
             fontWeight: '700',
             fontSize: '1.8rem',
             letterSpacing: 1,
@@ -85,13 +98,29 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           Bem-vindo ao RIS
         </h2>
 
+        {/* Label + Input Usuário */}
+        <label
+          htmlFor="username"
+          style={{ 
+            display: 'block', 
+            textAlign: 'left', 
+            marginBottom: 6, 
+            fontWeight: 600, 
+            color: '#4f46e5' 
+          }}
+        >
+          Usuário
+        </label>
         <input
-          placeholder="Usuário"
+          id="username"
+          name="username"
+          type="text"
+          placeholder="Digite seu usuário"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           style={{
             width: '100%',
-            padding: '16px 16px',
+            padding: '14px 16px',
             borderRadius: 12,
             border: '1.8px solid #cbd5e1',
             marginBottom: 20,
@@ -102,16 +131,33 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           }}
           onFocus={(e) => (e.target.style.borderColor = '#4f46e5')}
           onBlur={(e) => (e.target.style.borderColor = '#cbd5e1')}
+          autoComplete="username"
+          disabled={loading}
         />
 
+        {/* Label + Input Senha */}
+        <label
+          htmlFor="password"
+          style={{ 
+            display: 'block', 
+            textAlign: 'left', 
+            marginBottom: 6, 
+            fontWeight: 600, 
+            color: '#4f46e5' 
+          }}
+        >
+          Senha
+        </label>
         <input
-          placeholder="Senha"
+          id="password"
+          name="password"
           type="password"
+          placeholder="Digite sua senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           style={{
             width: '100%',
-            padding: '16px 16px',
+            padding: '14px 16px',
             borderRadius: 12,
             border: '1.8px solid #cbd5e1',
             marginBottom: 30,
@@ -122,6 +168,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           }}
           onFocus={(e) => (e.target.style.borderColor = '#4f46e5')}
           onBlur={(e) => (e.target.style.borderColor = '#cbd5e1')}
+          autoComplete="current-password"
+          onKeyDown={onKeyDown}
+          disabled={loading}
         />
 
         <button
@@ -148,26 +197,30 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             transition: 'background 0.3s ease',
           }}
           onMouseEnter={(e) => {
-            if (!loading) e.currentTarget.style.background = 'linear-gradient(to right, #3b82f6, #4f46e5)';
+            if (!loading)
+              e.currentTarget.style.background = 'linear-gradient(to right, #3b82f6, #4f46e5)';
           }}
           onMouseLeave={(e) => {
-            if (!loading) e.currentTarget.style.background = 'linear-gradient(to right, #4f46e5, #3b82f6)';
+            if (!loading)
+              e.currentTarget.style.background = 'linear-gradient(to right, #4f46e5, #3b82f6)';
           }}
+          aria-disabled={loading}
         >
           {loading ? (
             <span>Entrando...</span>
           ) : (
             <>
-              <FaSignInAlt size={22} /> Entrar
+              <FaSignInAlt size={22} aria-hidden="true" /> Entrar
             </>
           )}
         </button>
 
-        {message && (
+        {displayMessage && (
           <p
+            role="alert"
             style={{
               marginTop: 26,
-              color: message.includes('sucesso') ? '#22c55e' : '#ef4444',
+              color: displayMessage.includes('sucesso') ? '#22c55e' : '#ef4444',
               fontWeight: '700',
               fontSize: 16,
               minHeight: 24,
@@ -175,7 +228,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             }}
             aria-live="polite"
           >
-            {message}
+            {displayMessage}
           </p>
         )}
       </div>

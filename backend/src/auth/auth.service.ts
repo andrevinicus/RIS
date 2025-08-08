@@ -21,18 +21,33 @@ export class AuthService {
     });
   }
 
-  async validateUser(usuario: string, senha: string): Promise<Usuario | null> {
-    const user = await this.findByUsername(usuario);
-    if (user && (await bcrypt.compare(senha, user.senha))) {
-      return user;
-    }
-    return null;
-  }
+async validateUser(usuario: string, senha: string): Promise<Usuario | null> {
+  console.log('Validando usuário:', usuario);
+  const user = await this.findByUsername(usuario);
+  console.log('Usuário encontrado:', user);
 
-  async login(user: Usuario) {
-    const payload = { usuario: user.usuario, sub: user.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
-  }
+  if (!user) return null;
+
+  const valid = await bcrypt.compare(senha, user.senha);
+  console.log('Senha válida?', valid);
+
+  if (valid) return user;
+  return null;
+}
+
+
+
+
+
+// auth.service.ts
+async login(user: any): Promise<{ access_token: string }> {
+  const payload = { username: user.usuario, sub: user.id };
+  const token = this.jwtService.sign(payload);
+  console.log('Token gerado no service:', token); // <- aqui
+  return {
+    access_token: token,
+  };
+}
+
+
 }

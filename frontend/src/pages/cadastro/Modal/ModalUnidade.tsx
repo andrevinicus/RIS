@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Modal from 'react-modal';
 import { fetchUnidades } from '../CadastroUnidades/ServiceUnidade';
-import { Unidade } from '../CadastroUnidades/HookTypes/types';
+import { Unidade } from '../../../types/types';
+
 
 Modal.setAppElement('#root');
 

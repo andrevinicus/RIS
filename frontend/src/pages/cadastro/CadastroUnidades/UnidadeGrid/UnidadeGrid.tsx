@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaFilter } from 'react-icons/fa';
-import { Unidade } from '../HookTypes/types';
+
 import {
   Container,
   TopBar,
@@ -10,7 +10,8 @@ import {
   Table,
   Td,
   Th,
-} from './UnidadeGridStyles';
+} from '../../../../components/StyleCadastro/StyleComponents';
+import { Unidade } from '../../../../types/types';
 
 interface UnidadeGridProps {
   unidades: Unidade[];
