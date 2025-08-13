@@ -16,19 +16,24 @@ export class UsuariosController {
   findAll() {
     return this.usuariosService.findAll();
   }
+
   @Get(':codigo/unidades')
   async getUnidadesVinculadas(@Param('codigo') codigo: string) {
     return this.usuariosService.getUnidadesVinculadas(codigo);
   }
 
   // Coloque esta rota antes das rotas com ':id' simples
-  @Post(':codigo/vincular-unidades')
-  async vincularUnidades(
-    @Param('codigo') codigo: string,
-    @Body('unidades') unidades: { id: string; nome: string }[],
-  ) {
-    return this.usuariosService.vincularUnidades(codigo, unidades);
-  }
+@Post(':codigo/vincular-unidades')
+async vincularUnidades(
+  @Param('codigo') codigo: string,
+  @Body() unidadesCodigos: string[],   // recebe direto o array de strings
+) {
+  console.log(`[vincularUnidades] código do usuário: ${codigo}`);
+  console.log(`[vincularUnidades] unidades recebidas no body:`, unidadesCodigos);
+
+  return this.usuariosService.vincularUnidades(codigo, unidadesCodigos);
+}
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -44,5 +49,20 @@ export class UsuariosController {
   remove(@Param('id') id: string) {
     return this.usuariosService.remove(id);
   }
+
+@Post(':codigo/trocar-unidade')
+async trocarUnidade(
+  @Param('codigo') codigo: string,
+  @Body('unidadeId') unidadeId: string,
+) {
+  const usuarioAtualizado = await this.usuariosService.trocarUnidade(codigo, unidadeId);
+  
+  // Retorne algo explícito que o frontend pode usar
+  return {
+    status: 'success',
+    message: 'Unidade trocada com sucesso',
+    data: usuarioAtualizado,
+  };
 }
 
+}

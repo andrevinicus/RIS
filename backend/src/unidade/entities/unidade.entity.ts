@@ -7,7 +7,7 @@ export class Unidade {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ unique: true}) // ← permite o backend gerar
+    @Column({ name: 'cod_unidade', unique: true })
     codUnidade: string;
 
     

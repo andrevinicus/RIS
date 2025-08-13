@@ -39,12 +39,34 @@ async login(
 }
 
   
-  @Get('me')
-  @UseGuards(JwtAuthGuard)
-  getMe(@Request() req) {
-    console.log('req.user:', req.user); // o payload do token deve estar aqui
-    return req.user;
-  }
+@Get('me')
+@UseGuards(JwtAuthGuard)
+async getMe(@Request() req) {
+  console.log('req.user:', req.user); // { userId, username }
+
+  // Busca o usuário pelo id para obter o código
+  const usuarioBase = await this.usuariosService.findById(req.user.userId || req.user.sub);
+
+  // Busca novamente, agora pelo código, trazendo relações
+  const user = await this.usuariosService.findByCodigoWithRelations(usuarioBase.codigo);
+
+  return {
+    codigo: user.codigo,
+    realname: user.usuario,
+    username: user.pessoaFisicanome,
+    unidadeAtiva: {
+      unidadePadraoID: user.unidadePadraoId,
+      unidadePadraoNome: user.unidadePadrao?.nome || '',  // Ajuste conforme sua entidade Unidade
+      unidadesDisponiveis: user.unidades || [],
+    },
+    perfil: {
+      nome:'Em Teste',
+    },
+    setor: {
+      nome: user.setor || '',
+    },
+  };
 }
 
 
+}

@@ -1,6 +1,6 @@
 // src/services/pessoaService.ts
 
-import api from "../../../components/axiosInstance";
+import api from "../../../components/axios/axiosInstance";
 
 
 interface Filtros {

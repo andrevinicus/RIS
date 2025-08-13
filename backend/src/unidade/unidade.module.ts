@@ -9,6 +9,10 @@ import { UnidadeController } from './unidade.controller';
   imports: [TypeOrmModule.forFeature([Unidade])],
   controllers: [UnidadeController],
   providers: [UnidadeService],
-  exports: [UnidadeService],
+  exports: [
+    UnidadeService,
+    TypeOrmModule,  // exporta o repositório Unidade para outros módulos
+  ],
 })
 export class UnidadeModule {}
+

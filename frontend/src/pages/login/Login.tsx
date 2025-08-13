@@ -19,7 +19,7 @@ const Login: React.FC = () => {
       setToken(access_token);
       console.log('Token recebido:', access_token);
 
-      const userInfo = await getMe(access_token);
+      const userInfo = await getMe();
       setUserInfo(userInfo);
 
       navigate('/home');

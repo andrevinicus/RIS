@@ -3,14 +3,13 @@ import { Type } from 'class-transformer';
 
 export class UnidadeDto {
   @IsString()
-  id: string;
+  codUnidade: string;  // alterar de id para codUnidade para bater com a entidade
 
   @IsString()
   nome: string;
 }
 
 export class CreateUsuarioDto {
-  
   @IsString()
   nomeCompleto: string;
 
@@ -46,10 +45,13 @@ export class CreateUsuarioDto {
   pessoaFisicanome?: string;
 
   @IsString()
-  unidadePadraoId: string;
+  unidadePadraoId: string;  // Só id da unidade padrão para criar a relação
 
-  @IsString()
-  unidadePadrao: string;
+  // Opcional: você pode remover esta propriedade do DTO, porque não faz sentido receber o objeto completo na criação
+  // @ValidateNested()
+  // @Type(() => UnidadeDto)
+  // @IsOptional()
+  // unidadePadrao?: UnidadeDto;
 
   @IsArray()
   @ValidateNested({ each: true })

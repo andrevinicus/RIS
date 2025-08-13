@@ -1,5 +1,5 @@
 
-import api from '../../../components/axiosInstance';
+import api from '../../../components/axios/axiosInstance';
 import { Unidade, UnidadeSimples, Usuario } from '../../../types/types';
 // ajuste o caminho conforme seu projeto
 
@@ -52,5 +52,10 @@ export async function salvarUnidadesVinculadas(
   codigo: string,
   unidades: UnidadeSimples[],
 ): Promise<void> {
-  await api.post(`${LINK}/${codigo}/vincular-unidades`, { unidades });
+  console.log('[salvarUnidadesVinculadas] Unidades recebidas:', unidades);
+  const codigosUnidades = unidades.map(u => u.id); // extrai só os ids (códigos)
+  console.log('[salvarUnidadesVinculadas] Códigos extraídos:', codigosUnidades);
+
+  // Envia o array simples para o backend
+  await api.post(`${LINK}/${codigo}/vincular-unidades`, codigosUnidades);
 }
