@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { PessoaJuridica } from '../PessoaJuridicaForms/types';
+
 import { deletePessoaJuridica, fetchPessoaJuridicaById, fetchPessoasJuridicas, savePessoaJuridica } from '../ServicePJ';
 import PessoaJuridicaGrid from './PessoaJuridicaGrid';
+import { PessoaJuridica } from '../../../../types/types';
 
 const FORMULARIO_VAZIO: PessoaJuridica = {
   id: '',

@@ -8,6 +8,8 @@ import { PersonModule } from './person/person.module';
 import { PessoaJuridicaModule } from './pessoa-juridica/pessoa-juridica.module';
 import { UnidadeModule } from './unidade/unidade.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
+import { TabelaPadraoModule } from './tabela-padrao/tabela-padrao.module';
+import { ConvenioModule } from './convenio/convenio.module';
 
 
 @Module({
@@ -30,7 +32,9 @@ import { UsuariosModule } from './usuarios/usuarios.module';
     PersonModule,
     PessoaJuridicaModule,
     UnidadeModule,
-    UsuariosModule, // <-- adiciona aqui
+    UsuariosModule,
+    TabelaPadraoModule,
+    ConvenioModule, // <-- adiciona aqui
   ],
 })
 export class AppModule {}

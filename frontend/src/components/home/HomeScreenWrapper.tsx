@@ -9,7 +9,7 @@ const HomeScreenWrapper: React.FC = () => {
   return (
     <>
       <HomeScreen onLogout={logout} />
-      <Outlet /> {/* Aqui renderiza rotas-filhas */}
+
     </>
   );
 };

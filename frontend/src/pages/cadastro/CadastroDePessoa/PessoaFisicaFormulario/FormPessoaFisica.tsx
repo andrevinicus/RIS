@@ -6,7 +6,7 @@ import { AddButton, CancelButton,
   ErrorMessage, FormularioContainer, 
   HeaderContainer, SaveButton, Select, 
   StyledGridContainer, Title } 
-  from './FormPessoaFisica.styles';
+  from '../../../../components/StyleComponents/FormStyles';
 import { PessoaFisica } from '../../../../types/types';
 
 // seu componente input aprimorado

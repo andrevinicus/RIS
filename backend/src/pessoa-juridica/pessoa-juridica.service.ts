@@ -21,7 +21,7 @@ private async gerarProximoCodigo(): Promise<string> {
     .getRawOne();
 
   const maiorCodigo = result?.max ?? 0;
-  return (parseInt(maiorCodigo) + 1).toString().padStart(4, '0');
+  return (parseInt(maiorCodigo) + 1).toString().padStart(6, '0');
 }
 
 

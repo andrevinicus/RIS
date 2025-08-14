@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaFilter } from 'react-icons/fa';
 import {
   Container,
@@ -27,7 +27,7 @@ interface GenericGridProps<T> {
   onDeleteClick: (id: string) => void;
   onFilterChange: (filters: Record<string, string>) => void;
   getId: (item: T) => string;
-  onRowDoubleClick?: (item: T) => void; // nova prop opcional
+  onRowDoubleClick?: (item: T) => void;
 }
 
 function GenericGrid<T>({
@@ -44,10 +44,9 @@ function GenericGrid<T>({
 }: GenericGridProps<T>) {
   const [filtroAberto, setFiltroAberto] = useState(false);
   const [selecionados, setSelecionados] = useState<string[]>([]);
-
   const [filtrosInternos, setFiltrosInternos] = useState<Record<string, string>>(filters);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setFiltrosInternos(filters);
   }, [filters]);
 
@@ -58,9 +57,7 @@ function GenericGrid<T>({
     setFiltrosInternos(prev => ({ ...prev, [name]: value }));
   };
 
-  const handlePesquisar = () => {
-    onFilterChange(filtrosInternos);
-  };
+  const handlePesquisar = () => onFilterChange(filtrosInternos);
 
   const handleCheckboxClick = (id: string) => {
     setSelecionados(prev =>
@@ -69,11 +66,9 @@ function GenericGrid<T>({
   };
 
   const handleRowClick = (id: string) => {
-    if (selecionados.length === 1 && selecionados[0] === id) {
-      setSelecionados([]);
-    } else {
-      setSelecionados([id]);
-    }
+    setSelecionados(prev =>
+      prev.length === 1 && prev[0] === id ? [] : [id]
+    );
   };
 
   const isSelecionado = (id: string) => selecionados.includes(id);
@@ -87,32 +82,31 @@ function GenericGrid<T>({
         </FilterButton>
 
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16 }}>
-          <span style={{ color: 'blue', cursor: 'pointer' }} onClick={onAddClick}>
-            Adicionar
-          </span>
-          <span
-            style={{
-              color: selecionadoUnico ? 'blue' : 'gray',
-              cursor: selecionadoUnico ? 'pointer' : 'not-allowed',
-            }}
-            onClick={() => {
-              if (selecionadoUnico) {
-                const item = items.find(i => getId(i) === selecionadoUnico);
-                if (item) onEditClick(item);
-              }
-            }}
-          >
-            Editar
-          </span>
-          <span
-            style={{
-              color: selecionadoUnico ? 'blue' : 'gray',
-              cursor: selecionadoUnico ? 'pointer' : 'not-allowed',
-            }}
-            onClick={() => selecionadoUnico && onDeleteClick(selecionadoUnico)}
-          >
-            Excluir
-          </span>
+          {['Adicionar', 'Editar', 'Excluir'].map((action, idx) => {
+            const isDisabled =
+              action !== 'Adicionar' && !selecionadoUnico;
+            const onClick =
+              action === 'Adicionar'
+                ? onAddClick
+                : action === 'Editar'
+                ? () => selecionadoUnico && onEditClick(items.find(i => getId(i) === selecionadoUnico)!)
+                : () => selecionadoUnico && onDeleteClick(selecionadoUnico);
+
+            return (
+              <span
+                key={idx}
+                style={{
+                  color: isDisabled ? 'gray' : 'blue',
+                  cursor: isDisabled ? 'not-allowed' : 'pointer',
+                  fontWeight: 500,
+                  transition: 'color 0.2s',
+                }}
+                onClick={onClick}
+              >
+                {action}
+              </span>
+            );
+          })}
         </div>
       </TopBar>
 
@@ -132,13 +126,17 @@ function GenericGrid<T>({
             style={{
               backgroundColor: '#007bff',
               color: 'white',
-              padding: '6px 12px',
-              borderRadius: 4,
+              padding: '6px 14px',
+              borderRadius: 6,
               cursor: 'pointer',
-              display: 'inline-block',
+              fontWeight: 500,
               marginTop: 8,
+              display: 'inline-block',
+              transition: 'background-color 0.2s',
             }}
             onClick={handlePesquisar}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#0056b3')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#007bff')}
           >
             Pesquisar
           </span>
@@ -168,23 +166,23 @@ function GenericGrid<T>({
                 <tr
                   key={id}
                   onClick={() => handleRowClick(id)}
-                  onDoubleClick={() => onRowDoubleClick?.(item)} 
+                  onDoubleClick={() => onRowDoubleClick?.(item)}
                   style={{
                     backgroundColor: isSelecionado(id)
                       ? 'rgba(0, 123, 255, 0.15)'
                       : 'transparent',
                     cursor: 'pointer',
+                    transition: 'background-color 0.2s',
                   }}
                   onMouseEnter={e => {
-                    if (!isSelecionado(id)) {
+                    if (!isSelecionado(id))
                       (e.currentTarget as HTMLElement).style.backgroundColor =
                         'rgba(0, 123, 255, 0.05)';
-                    }
                   }}
                   onMouseLeave={e => {
-                    if (!isSelecionado(id)) {
-                      (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
-                    }
+                    if (!isSelecionado(id))
+                      (e.currentTarget as HTMLElement).style.backgroundColor =
+                        'transparent';
                   }}
                 >
                   <Td
@@ -199,7 +197,9 @@ function GenericGrid<T>({
                     />
                   </Td>
                   {columns.map((col, idx) => (
-                    <Td key={idx}>{col.render ? col.render(item) : (item[col.field] as any)}</Td>
+                    <Td key={idx}>
+                      {col.render ? col.render(item) : String(item[col.field])}
+                    </Td>
                   ))}
                 </tr>
               );

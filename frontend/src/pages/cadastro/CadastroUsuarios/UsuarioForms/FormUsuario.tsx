@@ -1,20 +1,10 @@
 import React, { useState } from 'react';
 
-import {
-  FormularioContainer,
-  HeaderContainer,
-  Title,
-  AddButton,
-  StyledGridContainer,
-  CancelButton,
-  SaveButton,
-  ErrorMessage,
-} from './FromsUsuario.Style';
-import InputText from '../InputText';
-
 import { Unidade, Usuario } from '../../../../types/types';
 import ModalUnidade from '../../Modal/ModalUnidade';
 import ModalPessoaFisica from '../../Modal/ModalPessoaFisica';
+import { AddButton, CancelButton, ErrorMessage, FormularioContainer, HeaderContainer, SaveButton, StyledGridContainer, Title } from '../../../../components/StyleComponents/FormStyles';
+import InputText from '../../CadastroDePessoa/PessoaFisicaFormulario/InputField';
 
 
 interface FormUsuarioProps {

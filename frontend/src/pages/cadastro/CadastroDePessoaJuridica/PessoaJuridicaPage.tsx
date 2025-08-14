@@ -7,35 +7,39 @@ import { usePessoaJuridica } from './PessoaJuridicaGrid/usePessoaJuridica';
 
 const PessoaJuridicaPage: React.FC = () => {
   const {
-    empresas,              // Lista de empresas carregadas
-    form,                  // Estado do formulário
-    isEditable,            // Indica se o formulário está sendo exibido
-    loading,               // Indicador de carregamento
-    error,                 // Mensagem de erro, se houver
-    handleChange,          // Handler para mudanças no formulário
-    handleAddClick,        // Handler ao clicar em "Adicionar"
-    handleCancel,          // Handler para cancelar edição
-    handleEditClick,       // Handler para iniciar edição
-    handleDelete,          // Handler para deletar
-    handleSave,            // Handler para salvar
-    setFiltros,            // Atualiza os filtros da grid
+    empresas,
+    form,
+    selected,            // igual PF
+    isEditable,
+    loading,
+    error,
+    handleChange,
+    handleAddClick,
+    handleCancel,
+    handleEditClick,
+    handleDelete,
+    handleSave,
+    setFiltros,
   } = usePessoaJuridica();
 
+  // Função para passar filtros para a grid
+  const handleFilterChange = (novosFiltros: { nome?: string; cnpj?: string; codigo?: string }) => {
+    setFiltros(novosFiltros);
+  };
+
   return (
-    <div style={{ padding: 16 }}>
-      {/* Grid de empresas - exibida quando não está editando */}
-      {!isEditable && (
+    <>
+      {!isEditable && !selected && (
         <PessoaJuridicaGrid
           empresas={empresas}
           onAddClick={handleAddClick}
           onEditClick={handleEditClick}
           onDeleteClick={handleDelete}
-          onFilterChange={setFiltros}
+          onFilterChange={handleFilterChange}
         />
       )}
 
-      {/* Formulário de empresa - exibido quando está em modo de edição/adicionando */}
-      {isEditable && (
+      {(isEditable || selected) && (
         <FormPessoaJuridica
           form={form}
           isEditable={isEditable}
@@ -47,7 +51,10 @@ const PessoaJuridicaPage: React.FC = () => {
           handleAddClick={handleAddClick}
         />
       )}
-    </div>
+
+      {loading && <p>Carregando...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+    </>
   );
 };
 

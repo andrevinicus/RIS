@@ -1,9 +1,9 @@
 import React from 'react';
 
 
-import InputText from './FormUnidadeInputs';
-import {  CancelButton, ErrorMessage, FormularioContainer, HeaderContainer, SaveButton, StyledGridContainer, Title } from './FormUnidade.styles';
 import { Unidade } from '../../../../types/types';
+import { CancelButton, ErrorMessage, FormularioContainer, HeaderContainer, SaveButton, StyledGridContainer, Title } from '../../../../components/StyleComponents/FormStyles';
+import InputText from '../../CadastroDePessoa/PessoaFisicaFormulario/InputField';
 
 interface FormUnidadeProps {
     form: Partial<Unidade>;

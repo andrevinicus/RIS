@@ -4,6 +4,7 @@ import PessoaFisicaPage from '../pages/cadastro/CadastroDePessoa/PessoaFisicaPag
 import PessoaJuridicaPage from '../pages/cadastro/CadastroDePessoaJuridica/PessoaJuridicaPage';
 import UnidadePage from '../pages/cadastro/CadastroUnidades/UnidadesPages';
 import UsuarioPage from '../pages/cadastro/CadastroUsuarios/UsuarioPage';
+import ConvenioPage from '../pages/cadastro/CadastroDeConvenios/ConvenioPage';
 
 export interface CustomRoute {
   path: string;
@@ -45,6 +46,11 @@ export const routes: CustomRoute[] = [
         path: 'Unidades',
         protected: true,
         component: UnidadePage,
+      },
+      {
+        path: 'Convenios',
+        protected: true,
+        component: ConvenioPage,
       },
     ],
   },

@@ -1,15 +1,17 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { getMe } from '../pages/login/authService';
 import { trocarUnidadeBackend } from '../services/unidadeService';
 
 export interface Unidade {
   codUnidade: string;
   nome: string;
+  nomeReduzido?: string;
 }
 
 export interface UnidadeAtiva {
   unidadePadraoID: string;
   unidadePadraoNome: string;
+  unidadeNomeReduzido?: string;
   unidadesDisponiveis: Unidade[];
 }
 
@@ -63,6 +65,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   });
   const [loading, setLoading] = useState(true);
 
+  // Flag para evitar chamadas duplicadas no StrictMode
+  const fetchedRef = useRef(false);
+
   const updateUserInfo = (user: UserInfo | null) => {
     if (user) {
       localStorage.setItem('userInfo', JSON.stringify(user));
@@ -77,6 +82,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+
     async function fetchUserInfo() {
       if (!token) {
         setUserInfoState(null);
@@ -87,6 +95,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
       try {
         const data = await getMe();
+
+        // Se unidadeNomeReduzido não existir, usa unidadePadraoNome
+        if (data.unidadeAtiva) {
+          data.unidadeAtiva.unidadeNomeReduzido =
+            data.unidadeAtiva.unidadeNomeReduzido || data.unidadeAtiva.unidadePadraoNome;
+        }
+
         updateUserInfo(data);
       } catch (error) {
         console.error('Erro ao buscar dados do usuário:', error);
@@ -129,15 +144,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const result = await trocarUnidadeBackend(userInfo.codigo, codUnidade);
       console.log('Resposta do backend:', result);
 
-   if (result.status !== 'success') {
-  throw new Error(result.message || 'Falha ao trocar unidade');
-}
+      if (result.status !== 'success') {
+        throw new Error(result.message || 'Falha ao trocar unidade');
+      }
 
       const novoUserInfo: UserInfo = {
         ...userInfo,
         unidadeAtiva: {
           ...userInfo.unidadeAtiva,
           unidadePadraoID: codUnidade,
+          unidadeNomeReduzido: unidade.nomeReduzido,
           unidadePadraoNome: unidade.nome,
           unidadesDisponiveis: userInfo.unidadeAtiva.unidadesDisponiveis,
         },

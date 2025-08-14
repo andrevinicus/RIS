@@ -9,7 +9,7 @@ const UsuarioPage: React.FC = () => {
     usuarios,
     unidades,
     form,
-    showForm,
+    showForm, // ou isEditable
     loading,
     error,
     handleAddClick,
@@ -23,7 +23,7 @@ const UsuarioPage: React.FC = () => {
   } = useUsuario();
 
   return (
-    <div style={{ padding: 3, margin: '0 auto' }}>
+    <>
       {!showForm && (
         <UsuarioGrid
           usuarios={usuarios}
@@ -52,7 +52,7 @@ const UsuarioPage: React.FC = () => {
 
       {loading && <p>Carregando...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
-    </div>
+    </>
   );
 };
 

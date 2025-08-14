@@ -124,3 +124,116 @@ export const InputFilter = styled.input`
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
   }
 `;
+
+export const SidebarContainer = styled.aside<{ $collapsed: boolean }>`
+  width: ${(props) => (props.$collapsed ? '70px' : '240px')};
+  background-color: #1e3a8a;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 10px;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1000;
+  transition: width 0.3s ease, padding 0.3s ease;
+  overflow: hidden;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.25);
+`;
+
+export const MenuButton = styled.button<{
+  $collapsed?: boolean;
+  $active?: boolean;
+  $hover?: boolean;
+}>`
+  width: 100%;
+  padding: ${(props) => (props.$collapsed ? '15px 0' : '12px 0')};
+  border-radius: 2px;
+  background-color: ${(props) => (props.$active || props.$hover ? 'rgba(255,255,255,0.2)' : 'transparent')};
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: ${(props) => (props.$collapsed ? 'center' : 'flex-start')};
+  cursor: pointer;
+  margin-bottom: 14px;
+  font-size: 16px;
+  font-weight: ${(props) => (props.$active || props.$hover ? 700 : 500)};
+  opacity: ${(props) => (props.$active || props.$hover ? 1 : 0.75)};
+  transition: all 0.3s ease;
+
+  div {
+    padding-left: ${(props) => (props.$collapsed ? 0 : 20)}px;
+    display: flex;
+    align-items: center;
+    gap: ${(props) => (props.$collapsed ? 0 : 16)}px;
+    width: ${(props) => (props.$collapsed ? 'auto' : '100%')};
+    justify-content: ${(props) => (props.$collapsed ? 'center' : 'flex-start')};
+  }
+`;
+
+
+export const LogoutButton = styled.button<{ $collapsed: boolean }>`
+  width: 100%;
+  padding: ${(props) => (props.$collapsed ? '12px 0' : '12px 20px')};
+  border-radius: 10px;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: ${(props) => (props.$collapsed ? 'center' : 'flex-start')};
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+
+  span {
+    margin-right: ${(props) => (props.$collapsed ? 0 : 16)}px;
+    display: flex;
+    align-items: center;
+  }
+`;
+export const SubSidebarContainer = styled.div<{ $collapsed: boolean }>`
+  position: fixed;
+  top: 50px;
+  left: ${(props) => (props.$collapsed ? '61px' : '232px')};
+  width: 250px;
+  background-color: #334e8c;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 12px 16px;
+  z-index: 1200;
+  transition: left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const SubNav = styled.nav`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+export const SubNavButton = styled.button`
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background-color: transparent;
+  color: white;
+  border: none;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+`;
+
+

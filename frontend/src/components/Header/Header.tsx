@@ -80,15 +80,30 @@ const Header: React.FC<HeaderProps> = ({
         >
           ☰
         </button>
-
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }}>
           <button
             type="button"
-            style={{ cursor: 'pointer', all: 'unset', display: 'flex', alignItems: 'center', gap: 8 }}
             onClick={() => setIsModalOpen((open) => !open)}
+            style={{
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '6px 10px',
+              borderRadius: 6,
+              border: 'none',
+              background: 'transparent',
+              transition: 'background-color 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
           >
             <User size={20} color="#6b7280" />
-            <span style={{ fontSize: 14, color: '#6b7280' }}>
+            <span style={{ fontSize: 14, color: '#374151' }}>
               {userInfo ? userInfo.realname || 'Usuário' : '...'}
             </span>
           </button>

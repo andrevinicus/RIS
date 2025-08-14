@@ -1,46 +1,45 @@
-// src/pages/UnidadePage.tsx
+// src/pages/ConvenioPage.tsx
 import React from 'react';
+import { useConvenio } from './ConvenioGrid/useConvenio';
+import ConvenioGrid from './ConvenioGrid/ConvenioGrid';
+import FormConvenio from './ConvenioForms/FormConvenio';
 
-import { useUnidade } from './HookTypes/useUnidade';
-import FormUnidadeComponent from './FormUnidade/FormUnidades';
-import UnidadeGrid from './UnidadeGrid/UnidadeGrid';
-
-const UnidadePage: React.FC = () => {
+const ConvenioPage: React.FC = () => {
   const {
-    unidades,
+    convenios,
     form,
-    selected,      // adicionado para controle igual PF/PJ
+    selected,
     isEditable,
     loading,
     error,
     handleChange,
     handleAddClick,
     handleCancel,
-    handleSave,
     handleEditClick,
-    handleDeleteClick,
+    handleDelete,
+    handleSave,
     setFiltros,
-  } = useUnidade();
+  } = useConvenio();
 
   // Função para passar filtros para a grid
-  const handleFilterChange = (novosFiltros: Record<string, string>) => {
+  const handleFilterChange = (novosFiltros: { nome?: string; codigo?: string; pessoaJuridica?: string }) => {
     setFiltros(novosFiltros);
   };
 
   return (
     <>
       {!isEditable && !selected && (
-        <UnidadeGrid
-          unidades={unidades}
+        <ConvenioGrid
+          convenios={convenios}
           onAddClick={handleAddClick}
           onEditClick={handleEditClick}
-          onDeleteClick={handleDeleteClick}
+          onDeleteClick={handleDelete}
           onFilterChange={handleFilterChange}
         />
       )}
 
       {(isEditable || selected) && (
-        <FormUnidadeComponent
+        <FormConvenio
           form={form}
           isEditable={isEditable}
           loading={loading}
@@ -48,6 +47,7 @@ const UnidadePage: React.FC = () => {
           handleChange={handleChange}
           handleCancel={handleCancel}
           handleSave={handleSave}
+          handleAddClick={handleAddClick}
         />
       )}
 
@@ -57,4 +57,4 @@ const UnidadePage: React.FC = () => {
   );
 };
 
-export default UnidadePage;
+export default ConvenioPage;
