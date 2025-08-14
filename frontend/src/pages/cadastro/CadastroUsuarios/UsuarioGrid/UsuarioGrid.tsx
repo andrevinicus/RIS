@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Usuario } from '../../../../types/types';
+
 import UsuarioVinculosPage from '../ConfigUser/UsuarioVinculosPage';
 import GenericGrid from '../../../../components/Grid/GenericGrid';
+import { Usuario } from '../../../../types/usuario';
 
 interface UsuarioGridProps {
   usuarios: Usuario[];

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Modal from 'react-modal';
-import { fetchPessoas } from '../CadastroDePessoa/ServicePF';
-import { PessoaFisica } from '../../../types/types';
+import { fetchUnidades } from '../pages/cadastro/CadastroUnidades/ServiceUnidade';
 import {
   CloseButton,
   customModalStyles,
@@ -11,24 +10,26 @@ import {
   ListItem,
   ModalContainer, 
   ModalTitle
-} from '../../../components/StyleComponents/ModalUnidade.styles';
+} from '../components/StyleComponents/ModalUnidade.styles';
+import { Unidade } from '../types/unidade';
 
 Modal.setAppElement('#root');
 
-interface ModalPessoaFisicaProps {
+interface ModalUnidadeProps {
   isOpen: boolean;
   onRequestClose: () => void;
-  onSelecionarPessoaFisica: (pessoa: PessoaFisica) => void;
+  onSelecionarUnidade: (unidade: Unidade) => void;
 }
 
-const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
+const ModalUnidade: React.FC<ModalUnidadeProps> = ({
   isOpen,
   onRequestClose,
-  onSelecionarPessoaFisica,
+  onSelecionarUnidade,
 }) => {
   const [filtroNome, setFiltroNome] = useState('');
   const [filtroCodigo, setFiltroCodigo] = useState('');
-  const [pessoas, setPessoas] = useState<PessoaFisica[]>([]);
+  const [filtroMunicipio, setFiltroMunicipio] = useState('');
+  const [unidades, setUnidades] = useState<Unidade[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,9 +37,10 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
 
   useEffect(() => {
     if (!isOpen) {
-      setPessoas([]);
+      setUnidades([]);
       setFiltroNome('');
       setFiltroCodigo('');
+      setFiltroMunicipio('');
       setError(null);
       return;
     }
@@ -49,29 +51,32 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
       setLoading(true);
       setError(null);
 
-      fetchPessoas({
-        nome: filtroNome.trim() || undefined,
-        codigo: filtroCodigo.trim() || undefined,
+      fetchUnidades({
+        nome: filtroNome.trim() !== '' ? filtroNome : undefined,
+        codUnidade: filtroCodigo.trim() !== '' ? filtroCodigo : undefined,
+        municipio: filtroMunicipio.trim() !== '' ? filtroMunicipio : undefined,
       })
-        .then(setPessoas)
-        .catch(err => setError(err.message || 'Erro ao carregar pessoas físicas'))
+        .then(setUnidades)
+        .catch(err =>
+          setError(err.message || 'Erro ao carregar unidades')
+        )
         .finally(() => setLoading(false));
     }, 500);
 
     return () => {
       if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
     };
-  }, [filtroNome, filtroCodigo, isOpen]);
+  }, [filtroNome, filtroCodigo, filtroMunicipio, isOpen]);
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      contentLabel="Selecionar Pessoa Física"
+      contentLabel="Selecionar Unidade"
       style={customModalStyles}
     >
       <ModalContainer>
-        <ModalTitle>Buscar Pessoa Física</ModalTitle>
+        <ModalTitle>Buscar Unidade</ModalTitle>
 
         <FiltersContainer>
           <FilterInput
@@ -83,27 +88,27 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
             value={filtroCodigo}
             onChange={e => setFiltroCodigo(e.target.value)}
             placeholder="Filtrar por código"
-            width="150px"
+            width="180px"
           />
         </FiltersContainer>
 
         <ListContainer>
           {loading && <p style={{ textAlign: 'center', color: '#666' }}>Carregando...</p>}
           {error && <p style={{ textAlign: 'center', color: 'crimson' }}>{error}</p>}
-          {!loading && !error && pessoas.length === 0 && (
+          {!loading && !error && unidades.length === 0 && (
             <p style={{ textAlign: 'center', color: '#666' }}>Nenhum resultado</p>
           )}
 
-          {pessoas.slice(0, 8).map(pessoa => (
+          {unidades.slice(0, 8).map(unidade => (
             <ListItem
-              key={pessoa.codigo}
+              key={unidade.codUnidade}
               onClick={() => {
-                onSelecionarPessoaFisica(pessoa);
+                onSelecionarUnidade(unidade);
                 onRequestClose();
               }}
             >
-              <strong>{pessoa.name}</strong>{' '}
-              <small style={{ color: '#666' }}>(Código: {pessoa.codigo})</small>
+              <strong>{unidade.nome}</strong>{' '}
+              <small style={{ color: '#666' }}>(Código: {unidade.codUnidade})</small>
             </ListItem>
           ))}
         </ListContainer>
@@ -114,4 +119,4 @@ const ModalPessoaFisica: React.FC<ModalPessoaFisicaProps> = ({
   );
 };
 
-export default ModalPessoaFisica;
+export default ModalUnidade;

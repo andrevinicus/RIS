@@ -7,7 +7,8 @@ import { AddButton, CancelButton,
   HeaderContainer, SaveButton, Select, 
   StyledGridContainer, Title } 
   from '../../../../components/StyleComponents/FormStyles';
-import { PessoaFisica } from '../../../../types/types';
+import { PessoaFisica } from '../../../../types/pessoaFisica';
+
 
 // seu componente input aprimorado
 
@@ -61,7 +62,7 @@ const FormPessoaFisica: React.FC<FormPessoaFisicaProps> = ({
       </HeaderContainer>
 
       <GridContainer columns="minmax(70px, 0.5fr) minmax(200px, 2fr) minmax(50px, 0.5fr) minmax(100px, 1fr)">
-        <InputText label="Código" name="id" value={form?.id || ''} disabled onChange={() => {}} />
+        <InputText label="Código" name="id" value={form?.codigo || ''} disabled onChange={() => {}} />
         <InputText label="Nome" name="name" value={form?.name || ''} onChange={handleChange} disabled={!isEditable} />
         <InputText label="Idade" name="idade" value={idade} disabled onChange={() => {}} />
         <InputText label="CPF" name="cpf" value={form?.cpf || ''} onChange={handleChange} disabled={!isEditable} />

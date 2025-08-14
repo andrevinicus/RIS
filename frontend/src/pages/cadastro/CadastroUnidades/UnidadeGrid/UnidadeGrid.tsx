@@ -1,6 +1,7 @@
 import React from 'react';
-import { Unidade } from '../../../../types/types';
+
 import GenericGrid from '../../../../components/Grid/GenericGrid';
+import { Unidade } from '../../../../types/unidade';
 
 
 interface UnidadeGridProps {

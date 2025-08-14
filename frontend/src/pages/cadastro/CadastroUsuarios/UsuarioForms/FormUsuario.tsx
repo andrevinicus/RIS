@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 
-import { Unidade, Usuario } from '../../../../types/types';
-import ModalUnidade from '../../Modal/ModalUnidade';
-import ModalPessoaFisica from '../../Modal/ModalPessoaFisica';
+import ModalUnidade from '../../../../Modal/ModalUnidade';
+import ModalPessoaFisica from '../../../../Modal/ModalPessoaFisica';
 import { AddButton, CancelButton, ErrorMessage, FormularioContainer, HeaderContainer, SaveButton, StyledGridContainer, Title } from '../../../../components/StyleComponents/FormStyles';
 import InputText from '../../CadastroDePessoa/PessoaFisicaFormulario/InputField';
+import { LookupContainer, LookupLabel, LookupWrapper, LookupIdInput, LookupNameWrapper, LookupNameInput, LookupSelectButton } from '../../../../components/StyleComponents/Lookup';
+import { Usuario } from '../../../../types/usuario';
+import { Unidade } from '../../../../context/AuthContext';
 
 
 interface FormUsuarioProps {
@@ -20,7 +22,7 @@ interface FormUsuarioProps {
   handleCancel: () => void;
   handleSave: () => void;
   onSelecionarPessoaFisica: (pessoa: { codigo: string; nome: string }) => void;
-  onSelecionarUnidade: (unidade: {codUnidade: string; nomeUnidade: string}) => void;
+  onSelecionarUnidade: (unidade: { codUnidade: string; nomeUnidade: string }) => void;
 }
 
 
@@ -52,8 +54,8 @@ const FormUsuario: React.FC<FormUsuarioProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUnidadeOpen, setIsModalUnidadeOpen] = useState(false);
   const dataCriacaoFormatada = form.dataCriacao
-  ? new Date(form.dataCriacao).toLocaleDateString()
-  : '';
+    ? new Date(form.dataCriacao).toLocaleDateString()
+    : '';
 
   return (
     <FormularioContainer>
@@ -63,7 +65,12 @@ const FormUsuario: React.FC<FormUsuarioProps> = ({
       </HeaderContainer>
 
       {/* Nome completo e Pessoa Física */}
-      <GridContainer columns="1fr 1fr" gap="20px">
+      <GridContainer columns="0.2fr 1fr 1fr">
+        <InputText
+          label="Código"
+          name="id"
+          value={form?.codigo || ''}
+          disabled onChange={() => { }} />
         <InputText
           label="Nome Completo"
           name="nomeCompleto"
@@ -71,66 +78,36 @@ const FormUsuario: React.FC<FormUsuarioProps> = ({
           onChange={handleChange}
           disabled={!isEditable}
         />
-
-        <div style={{ display: 'flex', flexDirection: 'column', height: '56px', justifyContent: 'center' }}>
-          <label style={{ fontWeight: 600, marginBottom: 4 }}>Pessoa Física</label>
-          <div style={{ display: 'flex', height: '40px' }}>
-            <input
+        <LookupContainer>
+          <LookupLabel>Pessoa Física</LookupLabel>
+          <LookupWrapper>
+            <LookupIdInput
+              $isEditable={isEditable}
               type="text"
               name="pessoaFisicaId"
               value={form.pessoaFisicaId || ''}
               onChange={handleChange}
               disabled={!isEditable}
-              style={{
-                width: '120px',
-                padding: '8px 12px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                backgroundColor: isEditable ? '#fff' : '#f5f5f5',
-                height: '36px',
-                boxSizing: 'border-box',
-              }}
             />
-            <div style={{ display: 'flex', flex: 1, height: '36px' }}>
-              <input
+            <LookupNameWrapper>
+              <LookupNameInput
                 type="text"
                 value={form.pessoaFisicanome || ''}
                 disabled
-                style={{
-                  flex: 1,
-                  padding: '8px 10px',
-                  border: '1px solid #ccc',
-                  borderRadius: '6px 0 0 6px',
-                  backgroundColor: '#f5f5f5',
-                  borderRight: 'none',
-                  height: '36px',
-                  boxSizing: 'border-box',
-                }}
               />
-              <button
+              <LookupSelectButton
+                $isEditable={isEditable}
                 type="button"
                 onClick={() => setIsModalOpen(true)}
                 disabled={!isEditable}
-                style={{
-                  width: 40,
-                  height: '36px',
-                  border: '1px solid #ccc',
-                  borderLeft: 'none',
-                  borderRadius: '0 6px 6px 0',
-                  backgroundColor: '#ffffff',
-                  cursor: isEditable ? 'pointer' : 'not-allowed',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
               >
                 🔍
-              </button>
-            </div>
-          </div>
-        </div>
-      </GridContainer>
+              </LookupSelectButton>
+            </LookupNameWrapper>
+          </LookupWrapper>
+        </LookupContainer>
 
+      </GridContainer>
       {/* Usuário e Senha */}
       <GridContainer columns="1fr 1fr" gap="20px">
         <InputText label="Usuário (login)" name="usuario" value={form.usuario || ''} onChange={handleChange} disabled={!isEditable} />
@@ -144,72 +121,51 @@ const FormUsuario: React.FC<FormUsuarioProps> = ({
       </GridContainer>
 
       {/* Página Inicial e Unidade Padrão */}
-      <GridContainer columns="1fr 1fr" gap="20px">
-        <InputText label="Página Inicial" name="paginaInicial" value={form.paginaInicial || ''} onChange={handleChange} disabled={!isEditable} />
+      <GridContainer columns="1fr 1fr">
+        <InputText
+          label="Página Inicial"
+          name="paginaInicial"
+          value={form.paginaInicial || ''}
+          onChange={handleChange}
+          disabled={!isEditable}
+        />
 
-        <div style={{ display: 'flex', flexDirection: 'column', height: '56px', justifyContent: 'center' }}>
-          <label style={{ fontWeight: 600, marginBottom: 4 }}>Unidade Padrão</label>
-          <div style={{ display: 'flex', height: '40px' }}>
-            <input
+        <LookupContainer>
+          <LookupLabel>Unidade Padrão</LookupLabel>
+          <LookupWrapper>
+            <LookupIdInput
+              $isEditable={isEditable}
               type="text"
               name="unidadePadraoId"
               value={form.unidadePadraoId || ''}
               onChange={handleChange}
               disabled={!isEditable}
-              style={{
-                width: '120px',
-                padding: '8px 12px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                backgroundColor: isEditable ? '#fff' : '#f5f5f5',
-                height: '36px',
-                boxSizing: 'border-box',
-              }}
             />
-            <div style={{ display: 'flex', flex: 1, height: '36px' }}>
-              <input
+            <LookupNameWrapper>
+              <LookupNameInput
                 type="text"
                 value={form.unidadePadrao || ''}
                 disabled
-                style={{
-                  flex: 1,
-                  padding: '8px 10px',
-                  border: '1px solid #ccc',
-                  borderRadius: '6px 0 0 6px',
-                  backgroundColor: '#f5f5f5',
-                  borderRight: 'none',
-                  height: '36px',
-                  boxSizing: 'border-box',
-                }}
               />
-              <button
+              <LookupSelectButton
+                $isEditable={isEditable}
                 type="button"
                 onClick={() => setIsModalUnidadeOpen(true)}
                 disabled={!isEditable}
-                style={{
-                  width: 40,
-                  height: '36px',
-                  border: '1px solid #ccc',
-                  borderLeft: 'none',
-                  borderRadius: '0 6px 6px 0',
-                  backgroundColor: '#ffffff',
-                  cursor: isEditable ? 'pointer' : 'not-allowed',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
               >
                 🔍
-              </button>
-            </div>
-          </div>
-        </div>
+              </LookupSelectButton>
+            </LookupNameWrapper>
+          </LookupWrapper>
+        </LookupContainer>
       </GridContainer>
+
+
 
       {/* Criação */}
       <GridContainer columns="1fr 1fr" gap="20px" marginTop="20px">
         <InputText label="Usuário Criação" name="usuarioCriacao" value={form.usuarioCriacao || ''} onChange={handleChange} disabled />
-        <InputText label="Data Criação" name="dataCriacao" value={dataCriacaoFormatada} onChange={handleChange} disabled />      
+        <InputText label="Data Criação" name="dataCriacao" value={dataCriacaoFormatada} onChange={handleChange} disabled />
       </GridContainer>
 
       {/* Situação */}
@@ -253,7 +209,7 @@ const FormUsuario: React.FC<FormUsuarioProps> = ({
         }}
       />
 
-    
+
       {/* Modal Unidade */}
       <ModalUnidade
         isOpen={isModalUnidadeOpen}
@@ -262,7 +218,7 @@ const FormUsuario: React.FC<FormUsuarioProps> = ({
           onSelecionarUnidade({
             codUnidade: unidade.codUnidade,
             nomeUnidade: unidade.nomeReduzido,
-           
+
           });
           setIsModalUnidadeOpen(false);
         }}

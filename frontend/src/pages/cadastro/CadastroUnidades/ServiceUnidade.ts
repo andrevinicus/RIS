@@ -1,5 +1,5 @@
-import { Unidade } from '../../../types/types';
 import api from '../../../components/axios/axiosInstance';
+import { Unidade } from '../../../types/unidade';
 
 // Buscar unidades com filtros
 export const fetchUnidades = async (filtros: {

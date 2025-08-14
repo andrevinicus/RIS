@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import { deletePessoa, fetchPessoas, fetchPessoaById, savePessoa } from './ServicePF';
-import { PessoaFisica } from '../../../types/types';
+import { PessoaFisica } from '../../../types/pessoaFisica';
+
 
 const FORMULARIO_VAZIO: PessoaFisica = {
   id: '',

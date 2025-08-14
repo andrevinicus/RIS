@@ -1,6 +1,8 @@
 
 import api from '../../../components/axios/axiosInstance';
-import { Unidade, UnidadeSimples, Usuario } from '../../../types/types';
+import { Unidade } from '../../../types/unidade';
+import { UnidadeSimples, Usuario } from '../../../types/usuario';
+
 // ajuste o caminho conforme seu projeto
 
  // ajuste se necessário

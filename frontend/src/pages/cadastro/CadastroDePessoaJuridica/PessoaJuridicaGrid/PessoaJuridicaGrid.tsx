@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import GenericGrid from '../../../../components/Grid/GenericGrid';
-import { PessoaJuridica } from '../../../../types/types';
+import { PessoaJuridica } from '../../../../types/pessoaJuridica';
+
 
 
 interface PessoaJuridicaGridProps {

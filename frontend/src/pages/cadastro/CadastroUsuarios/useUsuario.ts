@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { fetchUsuarios, saveUsuario, deleteUsuario } from './ServiceUsuario';
 import { fetchUnidades } from '../CadastroUnidades/ServiceUnidade';
-import { Unidade, Usuario } from '../../../types/types';
+import { Usuario } from '../../../types/usuario';
+import { Unidade } from '../../../types/unidade';
+
 
 
 const FORM_VAZIO: Omit<Usuario, "unidades" | "usuarioCriacao" > = {

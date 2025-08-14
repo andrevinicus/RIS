@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import { deleteUnidade, fetchUnidades, saveUnidade } from '../ServiceUnidade';
-import { Unidade } from '../../../../types/types';
+import { Unidade } from '../../../../types/unidade';
+
 
 const FORMULARIO_VAZIO: Unidade = {
   codUnidade: '',

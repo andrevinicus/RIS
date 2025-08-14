@@ -2,7 +2,8 @@ import React from 'react';
 
 import { AddButton, CancelButton, ErrorMessage, FormularioContainer, HeaderContainer, SaveButton, StyledGridContainer, Title } from '../../../../../components/StyleComponents/FormStyles';
 import InputText from '../../../CadastroDePessoa/PessoaFisicaFormulario/InputField';
-import { PessoaJuridica } from '../../../../../types/types';
+import { PessoaJuridica } from '../../../../../types/pessoaJuridica';
+
 
 interface FormPessoaJuridicaProps {
   form: PessoaJuridica;
@@ -27,7 +28,8 @@ const FormPessoaJuridicaComponent: React.FC<FormPessoaJuridicaProps> = ({ form, 
         {!isEditable && <AddButton onClick={handleAddClick}>Adicionar</AddButton>}
       </HeaderContainer>
 
-      <GridContainer columns="1fr">
+      <GridContainer columns="0.2fr 1fr">
+        <InputText label="Código" name="id"value={form?.codigo || ''}disabled onChange={() => { }} />
         <InputText label="Razão Social" name="razao_social" value={form.razao_social || ''} onChange={handleChange} disabled={!isEditable} />
       </GridContainer>
 

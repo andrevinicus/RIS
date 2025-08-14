@@ -27,33 +27,14 @@ export const routes: CustomRoute[] = [
     protected: true,
     component: HomeScreenWrapper,
     children: [
-      {
-        path: 'pessoa-fisica',
-        protected: true,
-        component: PessoaFisicaPage,  // <-- aqui o componente correto
-      },
-      {
-        path: 'pessoa-juridica',
-        protected: true,
-        component: PessoaJuridicaPage,
-      },
-      {
-        path: 'usuarios',
-        protected: true,
-        component: UsuarioPage,
-      },
-      {
-        path: 'Unidades',
-        protected: true,
-        component: UnidadePage,
-      },
-      {
-        path: 'Convenios',
-        protected: true,
-        component: ConvenioPage,
-      },
+      { path: 'pessoa-fisica', protected: true, component: PessoaFisicaPage },
+      { path: 'pessoa-juridica', protected: true, component: PessoaJuridicaPage },
+      { path: 'usuarios', protected: true, component: UsuarioPage },
+      { path: 'unidades', protected: true, component: UnidadePage },
+      { path: 'convenios', protected: true, component: ConvenioPage },
     ],
   },
 
   { path: '*', component: Login },
 ];
+

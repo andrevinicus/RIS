@@ -2,7 +2,8 @@ import React from 'react';
 
 
 import GenericGrid from '../../../../components/Grid/GenericGrid';
-import { PessoaJuridica } from '../../../../types/types';
+import { PessoaJuridica } from '../../../../types/pessoaJuridica';
+
 
 
 export interface ConvenioGridItem {
@@ -11,7 +12,9 @@ export interface ConvenioGridItem {
   nome: string;
   contato?: string;
   telefone?: string;
+  codigoAns?: string; // ← adicionar aqui
   pessoaJuridica: PessoaJuridica;
+  pessoaJuridicaId?: string;
   createdAt: Date;
 }
 
@@ -51,6 +54,11 @@ const ConvenioGrid: React.FC<ConvenioGridProps> = ({
       onEditClick={onEditClick}
       onDeleteClick={onDeleteClick}
       getId={(c) => c.codigo}
+      onRowDoubleClick={(item) => {
+        // Redireciona para a tela de planos do convênio
+        window.location.href = `/planos/${item.id}`;
+        // ou usando react-router: navigate(`/planos/${item.id}`);
+      }}
     />
   );
 };

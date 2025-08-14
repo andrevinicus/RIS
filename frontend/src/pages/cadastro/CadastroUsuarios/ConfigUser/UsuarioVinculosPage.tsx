@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import SetorTab from './SetorTab';
 import PerfilTab from './PerfilTab';
 import UnidadeTab from './UnidadeTab';
-import { Usuario } from '../../../../types/types';
+import { Usuario } from '../../../../types/usuario';
+
 
 
 const abas = ['Perfil', 'Unidade', 'Setor'] as const;

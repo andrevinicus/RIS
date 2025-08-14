@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchUnidadesVinculadas, salvarUnidadesVinculadas } from '../ServiceUsuario';
 import { fetchUnidades } from '../../CadastroUnidades/ServiceUnidade';
-import { Unidade } from '../../../../types/types';
+import { Unidade } from '../../../../types/unidade';
 
 interface UnidadeTabProps {
   usuarioCodigo: string;

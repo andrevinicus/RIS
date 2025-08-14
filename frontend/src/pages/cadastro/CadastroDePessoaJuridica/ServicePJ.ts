@@ -1,7 +1,8 @@
 // services/pessoaJuridicaService.ts
 
 import api from "../../../components/axios/axiosInstance";
-import { PessoaJuridica } from "../../../types/types";
+import { PessoaJuridica } from "../../../types/pessoaJuridica";
+
 
 
 const API_URL = '/pessoas-juridicas'; // já temos baseURL no axios
