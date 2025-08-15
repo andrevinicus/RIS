@@ -9,7 +9,7 @@ export const LookupContainer = styled.div`
 `;
 
 export const LookupLabel = styled.label`
-  font-weight: 600;
+  font-weight: 300;
   margin-bottom: 4px;
 `;
 

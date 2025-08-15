@@ -133,7 +133,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onLogout }) => {
           onLogout={handleLogout}
         />
 
-        <main style={{ flexGrow: 1, padding: 10, overflowY: 'auto', marginTop: 40, height: 'calc(100vh - 60px)', paddingBottom: 50 }}>
+        <main style={{ flexGrow: 1, padding: 10, marginTop: 40, height: 'calc(100vh - 60px)', paddingBottom: 50 }}>
           <div style={{
             position: 'fixed',
             bottom: 0,

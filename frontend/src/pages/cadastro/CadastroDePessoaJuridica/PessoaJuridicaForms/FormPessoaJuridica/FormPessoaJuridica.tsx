@@ -17,7 +17,7 @@ interface FormPessoaJuridicaProps {
 }
 
 const GridContainer: React.FC<{ columns: string; gap?: string; marginTop?: string; children: React.ReactNode }> = ({ columns, gap = '16px', marginTop = '5px', children }) => (
-  <StyledGridContainer columns={columns} gap={gap} marginTop={marginTop}>{children}</StyledGridContainer>
+  <StyledGridContainer $columns={columns} $gap={gap} $marginTop={marginTop}>{children}</StyledGridContainer>
 );
 
 const FormPessoaJuridicaComponent: React.FC<FormPessoaJuridicaProps> = ({ form, isEditable, loading, error, handleChange, handleAddClick, handleCancel, handleSave }) => {

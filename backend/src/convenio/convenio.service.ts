@@ -49,7 +49,7 @@ export class ConvenioService {
   }
 
   // Buscar por ID
-  async findOne(id: number): Promise<Convenio> {
+  async findOne(id: string): Promise<Convenio> {
     const convenio = await this.convenioRepository.findOne({
       where: { id },
       relations: ['pessoaJuridica'],
@@ -61,7 +61,7 @@ export class ConvenioService {
   }
 
   // Atualizar convênio
-  async update(id: number, dto: UpdateConvenioDto): Promise<Convenio> {
+  async update(id: string, dto: UpdateConvenioDto): Promise<Convenio> {
     const convenio = await this.findOne(id);
 
     // Se atualizar pessoa jurídica
@@ -80,7 +80,7 @@ export class ConvenioService {
   }
 
   // Remover convênio
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const convenio = await this.findOne(id);
     await this.convenioRepository.remove(convenio);
   }

@@ -34,7 +34,7 @@ const GridContainer: React.FC<{
   marginTop?: string;
   children: React.ReactNode;
 }> = ({ columns, gap = '16px', marginTop = '16px', children }) => (
-  <StyledGridContainer columns={columns} gap={gap} marginTop={marginTop}>
+  <StyledGridContainer $columns={columns} $gap={gap} $marginTop={marginTop}>
     {children}
   </StyledGridContainer>
 );

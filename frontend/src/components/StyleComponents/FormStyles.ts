@@ -36,11 +36,15 @@ export const AddButton = styled.button`
   }
 `;
 
-export const StyledGridContainer = styled.div<{ columns: string; gap?: string; marginTop?: string }>`
+export const StyledGridContainer = styled.div<{
+  $columns: string;
+  $gap?: string;
+  $marginTop?: string;
+}>`
   display: grid;
-  grid-template-columns: ${({ columns }) => columns};
-  gap: ${({ gap }) => gap || '16px'};
-  margin-top: ${({ marginTop }) => marginTop || '16px'};
+  grid-template-columns: ${({ $columns }) => $columns};
+  gap: ${({ $gap }) => $gap || '16px'};
+  margin-top: ${({ $marginTop }) => $marginTop || '16px'};
 `;
 
 export const CancelButton = styled.button`
@@ -76,13 +80,13 @@ export const ErrorMessage = styled.div`
   margin-top: 16px;
 `;
 
-export const Select = styled.select<{ disabled?: boolean }>`
+export const Select = styled.select<{ $disabled?: boolean; $hasError?: boolean }>`
   width: 100%;
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid rgba(0,0,0,0.2);
-  background-color: ${({ disabled }) => (disabled ? '#f9f9f9' : '#fff')};
+  border: 1px solid ${({ $hasError }) => ($hasError ? 'red' : 'rgba(0,0,0,0.2)')};
+  background-color: ${({ $disabled }) => ($disabled ? '#f9f9f9' : '#fff')};
   box-sizing: border-box;
   font-size: 14px;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'auto')};
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'auto')};
 `;

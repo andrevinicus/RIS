@@ -12,15 +12,19 @@ export class PessoaJuridicaController {
     return this.pjService.create(createDto);
   }
 
-  @Get()
-  findAll(
-    @Query('codigo') codigo?: string,
-    @Query('cnpj') cnpj?: string,
-    @Query('razao_social') razao_social?: string,
-    @Query('nome_fantasia') nome_fantasia?: string,
-  ) {
-    return this.pjService.findAll({ codigo, cnpj, razao_social, nome_fantasia });
-  }
+@Get()
+async findAll(
+  @Query('codigo') codigo?: string,
+  @Query('cnpj') cnpj?: string,
+  @Query('razao_social') razao_social?: string,
+  @Query('nome_fantasia') nome_fantasia?: string,
+) {
+  const pessoas = await this.pjService.findAll({ codigo, cnpj, razao_social, nome_fantasia });
+
+  // Retorna todos os dados da pessoa jurídica
+  return pessoas;
+}
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {

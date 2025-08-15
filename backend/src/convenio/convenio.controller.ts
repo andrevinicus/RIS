@@ -37,7 +37,7 @@ export class ConvenioController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Convenio> {
+  async findOne(@Param('id') id: string): Promise<Convenio> {
     this.logger.log(`Buscando convênio com ID: ${id}`);
     const result = await this.convenioService.findOne(id);
     if (result) {
@@ -50,7 +50,7 @@ export class ConvenioController {
 
   @Patch(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() dto: UpdateConvenioDto,
   ): Promise<Convenio> {
     this.logger.log(`Atualizando convênio ID ${id} com dados: ${JSON.stringify(dto)}`);
@@ -60,9 +60,10 @@ export class ConvenioController {
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  async remove(@Param('id') id: string): Promise<void> {
     this.logger.log(`Removendo convênio ID: ${id}`);
     await this.convenioService.remove(id);
     this.logger.log(`Convênio removido com sucesso: ID ${id}`);
   }
 }
+

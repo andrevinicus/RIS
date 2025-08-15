@@ -17,7 +17,7 @@ interface FormUnidadeProps {
 }
 
 const GridContainer: React.FC<{columns: string; gap?: string; marginTop?: string; children: React.ReactNode;}> = ({ columns, gap = '16px', marginTop = '16px', children }) => (
-    <StyledGridContainer columns={columns} gap={gap} marginTop={marginTop}>{children}</StyledGridContainer>
+    <StyledGridContainer $columns={columns} $gap={gap} $marginTop={marginTop}>{children}</StyledGridContainer>
 );
 
 const FormUnidade: React.FC<FormUnidadeProps> = ({ form, isEditable, loading, error, handleChange, handleCancel, handleSave,

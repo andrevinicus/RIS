@@ -1,3 +1,4 @@
+// GenericGrid.tsx
 import React, { useState, useEffect } from 'react';
 import { FaFilter } from 'react-icons/fa';
 import {
@@ -13,7 +14,7 @@ import {
 
 interface Column<T> {
   label: string;
-  field: keyof T;
+  field: keyof T | string;
   render?: (item: T) => React.ReactNode;
 }
 
@@ -28,6 +29,10 @@ interface GenericGridProps<T> {
   onFilterChange: (filters: Record<string, string>) => void;
   getId: (item: T) => string;
   onRowDoubleClick?: (item: T) => void;
+  pageSize?: number;
+
+  // 🔹 Clique direito
+  onRowContextMenu?: (event: React.MouseEvent, item: T) => void;
 }
 
 function GenericGrid<T>({
@@ -41,13 +46,17 @@ function GenericGrid<T>({
   onFilterChange,
   getId,
   onRowDoubleClick,
+  onRowContextMenu, // 🔹 recebendo clique direito
+  pageSize = 10,
 }: GenericGridProps<T>) {
   const [filtroAberto, setFiltroAberto] = useState(false);
   const [selecionados, setSelecionados] = useState<string[]>([]);
   const [filtrosInternos, setFiltrosInternos] = useState<Record<string, string>>(filters);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     setFiltrosInternos(filters);
+    setCurrentPage(1);
   }, [filters]);
 
   const toggleFiltro = () => setFiltroAberto(prev => !prev);
@@ -74,42 +83,53 @@ function GenericGrid<T>({
   const isSelecionado = (id: string) => selecionados.includes(id);
   const selecionadoUnico = selecionados.length === 1 ? selecionados[0] : null;
 
+  // Paginação
+  const totalPages = Math.ceil(items.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const visibleItems = items.slice(startIndex, startIndex + pageSize);
+
   return (
     <Container>
+      {/* TopBar */}
       <TopBar>
         <FilterButton onClick={toggleFiltro}>
           <FaFilter style={{ marginRight: 6 }} /> Filtrar
         </FilterButton>
 
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           {['Adicionar', 'Editar', 'Excluir'].map((action, idx) => {
-            const isDisabled =
-              action !== 'Adicionar' && !selecionadoUnico;
+            const isDisabled = action !== 'Adicionar' && !selecionadoUnico;
             const onClick =
               action === 'Adicionar'
                 ? onAddClick
                 : action === 'Editar'
-                ? () => selecionadoUnico && onEditClick(items.find(i => getId(i) === selecionadoUnico)!)
-                : () => selecionadoUnico && onDeleteClick(selecionadoUnico);
+                  ? () => selecionadoUnico && onEditClick(items.find(i => getId(i) === selecionadoUnico)!)
+                  : () => selecionadoUnico && onDeleteClick(selecionadoUnico);
 
             return (
-              <span
+              <button
                 key={idx}
+                disabled={isDisabled}
+                onClick={onClick}
                 style={{
-                  color: isDisabled ? 'gray' : 'blue',
+                  padding: '6px 12px',
+                  borderRadius: 6,
+                  border: '1px solid #007bff',
+                  backgroundColor: isDisabled ? '#f0f0f0' : '#007bff',
+                  color: isDisabled ? '#aaa' : '#fff',
                   cursor: isDisabled ? 'not-allowed' : 'pointer',
                   fontWeight: 500,
-                  transition: 'color 0.2s',
+                  transition: 'all 0.2s',
                 }}
-                onClick={onClick}
               >
                 {action}
-              </span>
+              </button>
             );
           })}
         </div>
       </TopBar>
 
+      {/* Filtros */}
       {filtroAberto && (
         <FilterContainer>
           {Object.keys(filtrosInternos).map(key => (
@@ -122,27 +142,25 @@ function GenericGrid<T>({
               onChange={handleChange}
             />
           ))}
-          <span
+          <button
+            onClick={handlePesquisar}
             style={{
               backgroundColor: '#007bff',
-              color: 'white',
+              color: '#fff',
               padding: '6px 14px',
               borderRadius: 6,
+              border: 'none',
               cursor: 'pointer',
               fontWeight: 500,
               marginTop: 8,
-              display: 'inline-block',
-              transition: 'background-color 0.2s',
             }}
-            onClick={handlePesquisar}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#0056b3')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#007bff')}
           >
             Pesquisar
-          </span>
+          </button>
         </FilterContainer>
       )}
 
+      {/* Tabela */}
       <Table>
         <thead>
           <tr>
@@ -153,43 +171,29 @@ function GenericGrid<T>({
           </tr>
         </thead>
         <tbody>
-          {items.length === 0 ? (
+          {visibleItems.length === 0 ? (
             <tr>
               <Td colSpan={columns.length + 1} style={{ textAlign: 'center' }}>
                 Nenhum registro encontrado.
               </Td>
             </tr>
           ) : (
-            items.map(item => {
+            visibleItems.map(item => {
               const id = getId(item);
               return (
                 <tr
                   key={id}
                   onClick={() => handleRowClick(id)}
                   onDoubleClick={() => onRowDoubleClick?.(item)}
+                  onContextMenu={(e) => onRowContextMenu?.(e, item)} // 🔹 clique direito
                   style={{
                     backgroundColor: isSelecionado(id)
                       ? 'rgba(0, 123, 255, 0.15)'
                       : 'transparent',
                     cursor: 'pointer',
-                    transition: 'background-color 0.2s',
-                  }}
-                  onMouseEnter={e => {
-                    if (!isSelecionado(id))
-                      (e.currentTarget as HTMLElement).style.backgroundColor =
-                        'rgba(0, 123, 255, 0.05)';
-                  }}
-                  onMouseLeave={e => {
-                    if (!isSelecionado(id))
-                      (e.currentTarget as HTMLElement).style.backgroundColor =
-                        'transparent';
                   }}
                 >
-                  <Td
-                    onClick={e => {
-                      e.stopPropagation();
-                    }}
-                  >
+                  <Td onClick={e => e.stopPropagation()}>
                     <input
                       type="checkbox"
                       checked={isSelecionado(id)}
@@ -198,7 +202,7 @@ function GenericGrid<T>({
                   </Td>
                   {columns.map((col, idx) => (
                     <Td key={idx}>
-                      {col.render ? col.render(item) : String(item[col.field])}
+                      {col.render ? col.render(item) : String(item[col.field as keyof T])}
                     </Td>
                   ))}
                 </tr>
@@ -207,6 +211,56 @@ function GenericGrid<T>({
           )}
         </tbody>
       </Table>
+
+      {/* Paginação */}
+      <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', gap: 6, marginTop: 12 }}>
+        <button
+          onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+          disabled={currentPage === 1}
+          style={{
+            padding: '6px 12px',
+            borderRadius: 6,
+            border: '1px solid #ccc',
+            backgroundColor: currentPage === 1 ? '#f0f0f0' : '#fff',
+            cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+          }}
+        >
+          ‹
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            style={{
+              padding: '6px 12px',
+              borderRadius: 6,
+              border: '1px solid #007bff',
+              backgroundColor: page === currentPage ? '#007bff' : '#fff',
+              color: page === currentPage ? '#fff' : '#007bff',
+              cursor: 'pointer',
+              fontWeight: 500,
+              transition: 'all 0.2s',
+            }}
+          >
+            {page}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+          disabled={currentPage === totalPages || totalPages === 0}
+          style={{
+            padding: '6px 12px',
+            borderRadius: 6,
+            border: '1px solid #ccc',
+            backgroundColor: currentPage === totalPages || totalPages === 0 ? '#f0f0f0' : '#fff',
+            cursor: currentPage === totalPages || totalPages === 0 ? 'not-allowed' : 'pointer',
+          }}
+        >
+          ›
+        </button>
+      </div>
     </Container>
   );
 }
