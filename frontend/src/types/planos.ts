@@ -1,3 +1,4 @@
+// src/types/plano.ts
 export interface Plano {
   id: string;
   codigo: string;

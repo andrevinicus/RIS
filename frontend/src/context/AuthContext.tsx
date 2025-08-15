@@ -69,6 +69,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const fetchedRef = useRef(false);
 
   const updateUserInfo = (user: UserInfo | null) => {
+    console.log('[updateUserInfo] Atualizando userInfo no localStorage:', user);
     if (user) {
       localStorage.setItem('userInfo', JSON.stringify(user));
     } else {
@@ -78,15 +79,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const setUserInfo = (user: UserInfo | null) => {
+    console.log('[setUserInfo] Chamado com:', user);
     updateUserInfo(user);
   };
 
   useEffect(() => {
-    if (fetchedRef.current) return;
+    if (fetchedRef.current) {
+      console.log('[useEffect] Fetch já executado antes. Ignorando...');
+      return;
+    }
     fetchedRef.current = true;
 
     async function fetchUserInfo() {
+      console.log('[fetchUserInfo] Iniciando busca das informações do usuário...');
       if (!token) {
+        console.warn('[fetchUserInfo] Nenhum token encontrado. Limpando usuário.');
         setUserInfoState(null);
         setLoading(false);
         return;
@@ -95,6 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
       try {
         const data = await getMe();
+        console.log('[fetchUserInfo] Dados recebidos do backend:', data);
 
         // Se unidadeNomeReduzido não existir, usa unidadePadraoNome
         if (data.unidadeAtiva) {
@@ -104,12 +112,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         updateUserInfo(data);
       } catch (error) {
-        console.error('Erro ao buscar dados do usuário:', error);
+        console.error('[fetchUserInfo] Erro ao buscar dados do usuário:', error);
         setUserInfoState(null);
         setTokenState(null);
         localStorage.removeItem('token');
         localStorage.removeItem('userInfo');
       } finally {
+        console.log('[fetchUserInfo] Finalizando busca do usuário.');
         setLoading(false);
       }
     }
@@ -118,7 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [token]);
 
   const setUnidadeAtiva = async (unidade: Unidade) => {
-    console.log('[setUnidadeAtiva] chamada com unidade:', unidade);
+    console.log('[setUnidadeAtiva] Chamada com unidade:', unidade);
 
     if (!userInfo) {
       console.warn('[setUnidadeAtiva] userInfo não disponível');
@@ -139,10 +148,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     try {
       const codUnidade = unidade.codUnidade;
-      console.log('[setUnidadeAtiva] enviando para backend, codUnidade:', codUnidade, 'codigo usuário:', userInfo.codigo);
+      console.log(
+        '[setUnidadeAtiva] Enviando para backend:',
+        { codUnidade, usuarioCodigo: userInfo.codigo }
+      );
 
       const result = await trocarUnidadeBackend(userInfo.codigo, codUnidade);
-      console.log('Resposta do backend:', result);
+      console.log('[setUnidadeAtiva] Resposta do backend:', result);
 
       if (result.status !== 'success') {
         throw new Error(result.message || 'Falha ao trocar unidade');
@@ -159,7 +171,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         },
       };
 
-      console.log('[setUnidadeAtiva] Atualizando userInfo local com:', novoUserInfo);
+      console.log('[setUnidadeAtiva] Atualizando userInfo local para:', novoUserInfo);
       updateUserInfo(novoUserInfo);
     } catch (error: any) {
       console.error('[setUnidadeAtiva] Erro ao trocar unidade:', error);
@@ -168,9 +180,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const setToken = (newToken: string | null) => {
+    console.log('[setToken] Token recebido:', newToken);
     if (newToken) {
       localStorage.setItem('token', newToken);
     } else {
+      console.log('[setToken] Removendo token e limpando userInfo.');
       localStorage.removeItem('token');
       localStorage.removeItem('userInfo');
       setUserInfoState(null);
@@ -179,6 +193,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
+    console.log('[logout] Realizando logout...');
     setToken(null);
     setUserInfo(null);
     localStorage.removeItem('token');

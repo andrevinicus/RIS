@@ -10,6 +10,7 @@ import { UnidadeModule } from './unidade/unidade.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { TabelaPadraoModule } from './tabela-padrao/tabela-padrao.module';
 import { ConvenioModule } from './convenio/convenio.module';
+import { PlanoModule } from './plano/plano.module';
 
 
 @Module({
@@ -34,7 +35,8 @@ import { ConvenioModule } from './convenio/convenio.module';
     UnidadeModule,
     UsuariosModule,
     TabelaPadraoModule,
-    ConvenioModule, // <-- adiciona aqui
+    ConvenioModule,
+    PlanoModule, // <-- adiciona aqui
   ],
 })
 export class AppModule {}

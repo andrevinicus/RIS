@@ -1,10 +1,7 @@
 import React from 'react';
-
-
+import { useNavigate } from 'react-router-dom';
 import GenericGrid from '../../../../components/Grid/GenericGrid';
 import { PessoaJuridica } from '../../../../types/pessoaJuridica';
-
-
 
 export interface ConvenioGridItem {
   id: string;
@@ -12,7 +9,7 @@ export interface ConvenioGridItem {
   nome: string;
   contato?: string;
   telefone?: string;
-  codigoAns?: string; // ← adicionar aqui
+  codigoAns?: string;
   pessoaJuridica: PessoaJuridica;
   pessoaJuridicaId?: string;
   createdAt: Date;
@@ -33,13 +30,15 @@ const ConvenioGrid: React.FC<ConvenioGridProps> = ({
   onEditClick,
   onDeleteClick,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <GenericGrid<ConvenioGridItem>
       items={convenios}
       columns={[
         { label: 'Código', field: 'codigo' },
         { label: 'Nome', field: 'nome' },
-        { label: 'Cnpj', field: 'contato' },
+        { label: 'CNPJ', field: 'pessoaJuridica', render: (c) => c.pessoaJuridica.cnpj },
         { label: 'Empresa', field: 'pessoaJuridica', render: (c) => c.pessoaJuridica.nome_fantasia },
         { label: 'Criado em', field: 'createdAt', render: (c) => new Date(c.createdAt).toLocaleDateString() },
       ]}
@@ -53,11 +52,9 @@ const ConvenioGrid: React.FC<ConvenioGridProps> = ({
       onAddClick={onAddClick}
       onEditClick={onEditClick}
       onDeleteClick={onDeleteClick}
-      getId={(c) => c.codigo}
+      getId={(c) => c.id}
       onRowDoubleClick={(item) => {
-        // Redireciona para a tela de planos do convênio
-        window.location.href = `/planos/${item.id}`;
-        // ou usando react-router: navigate(`/planos/${item.id}`);
+        navigate(`/cadastro/planos/${item.id}`);
       }}
     />
   );

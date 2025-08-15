@@ -56,7 +56,8 @@ async getMe(@Request() req) {
     username: user.pessoaFisicanome,
     unidadeAtiva: {
       unidadePadraoID: user.unidadePadraoId,
-      unidadePadraoNome: user.unidadePadrao?.nome || '',  // Ajuste conforme sua entidade Unidade
+      unidadePadraoNome: user.unidadePadrao?.nome || '',
+      unidadeNomeReduzido: user.unidadePadrao?.nomeReduzido || user.unidadePadrao?.nome || '',
       unidadesDisponiveis: user.unidades || [],
     },
     perfil: {

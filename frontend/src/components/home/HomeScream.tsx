@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../Sidebar/Sidebar';
 import Header from '../Header/Header';
@@ -27,7 +27,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onLogout }) => {
   const [submenuHover, setSubmenuHover] = useState(false);
   const [showSubCadastro, setShowSubCadastro] = useState(false);
 
-  // Dados do contexto
+  const subSidebarRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
   const unidadeAtiva: Unidade = {
     codUnidade: userInfo?.unidadeAtiva?.unidadePadraoID || '',
     nome: userInfo?.unidadeAtiva?.unidadePadraoNome || '',
@@ -39,8 +41,26 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onLogout }) => {
 
   const onSelectUnidade = (unidade: Unidade) => { setUnidadeAtiva(unidade); };
   const handleLogout = () => { onLogout(); };
-
   const currentSidebarWidth = sidebarVisible ? (collapsed ? 70 : 230) : 0;
+
+  // Fecha SubSidebar ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        showSubCadastro &&
+        subSidebarRef.current &&
+        !subSidebarRef.current.contains(target) &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(target)
+      ) {
+        setShowSubCadastro(false);
+        setMenuOpen(null);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showSubCadastro]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -54,45 +74,40 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onLogout }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Eventos de abrir/fechar submenu
-  useEffect(() => {
-    const handleOpenSub = () => setShowSubCadastro(true);
-    const handleCloseSub = () => setShowSubCadastro(false);
-
-    window.addEventListener('openSubCadastro', handleOpenSub);
-    window.addEventListener('closeSubCadastro', handleCloseSub);
-
-    return () => {
-      window.removeEventListener('openSubCadastro', handleOpenSub);
-      window.removeEventListener('closeSubCadastro', handleCloseSub);
-    };
-  }, []);
-
   return (
     <div style={{ display: 'flex', height: '100vh', backgroundColor: '#f3f4f6' }}>
       {sidebarVisible && (
-        <Sidebar
-          menuOpen={menuOpen}
-          setMenuOpen={(menu: 'Cadastros' | 'listaConsultas' | 'perfilClinica' | null) => {
-            setMenuOpen(menu);
-          }}
-          onLogout={onLogout}
-          isMobile={isMobile}
-          closeSidebar={() => setSidebarVisible(false)}
-          collapsed={collapsed}
-          onMenuHoverStart={() => { if(menuOpen === 'Cadastros') setShowSubCadastro(true); }}
-          onMenuHoverEnd={() => { if(menuOpen !== 'Cadastros') setShowSubCadastro(false); }}
-        />
+        <div ref={sidebarRef}>
+          <Sidebar
+            menuOpen={menuOpen}
+            setMenuOpen={(menu) => {
+              setMenuOpen(menu);
+              if (menu === 'Cadastros') setShowSubCadastro(true);
+              else setShowSubCadastro(false);
+            }}
+            onLogout={onLogout}
+            isMobile={isMobile}
+            closeSidebar={() => setSidebarVisible(false)}
+            collapsed={collapsed}
+            onMenuHoverStart={() => { if(menuOpen === 'Cadastros') setShowSubCadastro(true); }}
+            onMenuHoverEnd={() => { if(menuOpen !== 'Cadastros') setShowSubCadastro(false); }}
+          />
+        </div>
       )}
 
       {sidebarVisible && showSubCadastro && (
-        <SubSidebarCadastro
-          collapsed={collapsed}
-          onClose={() => setShowSubCadastro(false)}
-          onMouseEnter={() => setSubmenuHover(true)}
-          onMouseLeave={() => setSubmenuHover(false)}
-          onItemClick={() => setMenuOpen(null)} // desmarca menu principal
-        />
+        <div ref={subSidebarRef}>
+          <SubSidebarCadastro
+            collapsed={collapsed}
+            onClose={() => {
+              setShowSubCadastro(false);
+              setMenuOpen(null);
+            }}
+            onMouseEnter={() => setSubmenuHover(true)}
+            onMouseLeave={() => setSubmenuHover(false)}
+            onItemClick={() => setMenuOpen(null)}
+          />
+        </div>
       )}
 
       <div style={{
